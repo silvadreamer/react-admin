@@ -2,8 +2,7 @@
  * 基础model,系统权限相关功能
  * 在src/store/index.js 中被挂载到store上，命名为 sys
  * **/
-
-import axios from "@/util/axios"; // 自己写的工具函数，封装了请求数据的通用接口
+import axios from "@/util/axios";
 import qs from "qs";
 import { message } from "antd";
 import { Dispatch } from "@/store";
@@ -26,11 +25,14 @@ const defaultState: SysState = {
   powerTreeData: [], // 分配权限treeTable组件所需原始数据
 };
 
+
+
 export default {
   state: defaultState,
   reducers: {
     // 保存所有菜单数据
     reducerSetMenus(state: SysState, payload: Menu[]): SysState {
+      console.info("payload", payload);
       return { ...state, menus: payload };
     },
     // 保存所有角色数据
@@ -66,6 +68,7 @@ export default {
      * **/
     async getMenusById(params: { id: number | number[] }) {
       try {
+        console.info("params", params);
         const res: Res = await axios.post(`/api/getMenusById`, params);
         return res;
       } catch (err) {

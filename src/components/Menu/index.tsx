@@ -1,8 +1,5 @@
 /** 左侧导航 **/
 
-// ==================
-// 第三方库
-// ==================
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Layout, Menu as MenuAntd } from "antd";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -10,16 +7,8 @@ import { cloneDeep } from "lodash";
 
 const { Sider } = Layout;
 
-// ==================
-// 自定义的东西
-// ==================
 import "./index.less";
-import ImgLogo from "@/assets/logo.png";
 import Icon from "@/components/Icon";
-
-// ==================
-// 类型声明
-// ==================
 import type { Menu } from "@/models/index.type";
 import type { ItemType } from "antd/lib/menu/hooks/useItems";
 
@@ -28,9 +17,6 @@ interface Props {
   collapsed: boolean; // 菜单咱开还是收起
 }
 
-// ==================
-// 本组件
-// ==================
 export default function MenuCom(props: Props): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,9 +30,6 @@ export default function MenuCom(props: Props): JSX.Element {
     setOpenKeys(paths.map((item) => `/${item}`));
   }, [location]);
 
-  // ==================
-  // 私有方法
-  // ==================
 
   // 菜单被选择
   const onSelect = (e: any) => {
@@ -128,8 +111,7 @@ export default function MenuCom(props: Props): JSX.Element {
     >
       <div className={props.collapsed ? "menuLogo hide" : "menuLogo"}>
         <Link to="/">
-          <img src={ImgLogo} />
-          <div>React-Admin</div>
+          <div>商城管理系统</div>
         </Link>
       </div>
       <MenuAntd

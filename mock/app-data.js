@@ -1,15 +1,3 @@
-// @ts-nocheck
-// 不需要下面这几行，只是本地发布DEMO用
-// const Mock = require("mockjs");
-// Mock.setup({
-//   timeout: "0-500",
-// });
-
-/**
- * 模拟数据
- * 这个文件使用了兼容IE11的语法，
- * 也没有弄成ts,因为server.js中要用到此文件
- * **/
 
 // ID序列
 let id_sequence = 1000;
@@ -20,8 +8,8 @@ const users = [
     id: 1,
     username: "admin",
     password: "123456",
-    phone: "13600000000",
-    email: "admin@react.com",
+    phone: "13531242134",
+    email: "admin@bjtu.edu.com",
     desc: "超级管理员",
     conditions: 1,
     roles: [1, 2, 3],
@@ -30,18 +18,18 @@ const users = [
     id: 2,
     username: "user",
     password: "123456",
-    phone: "13600000001",
-    email: "user@react.com",
+    phone: "13531242134",
+    email: "user@bjtu.edu.com",
     desc: "普通管理员",
     conditions: 1,
-    roles: [2],
+    roles: [3],
   },
   {
     id: 3,
-    username: "user",
+    username: "user2",
     password: "123456",
-    phone: "13600000001",
-    email: "user@react.com",
+    phone: "13531242135",
+    email: "user3@bjtu.edu.com",
     desc: "普通管理员3",
     conditions: 1,
     roles: [2],
@@ -49,9 +37,9 @@ const users = [
   {
     id: 4,
     username: "user",
-    password: "123456",
+    password: "$2a$10$zt6dUMTjNSyzINTGyiAgluna3mPm7qdgl26vj4tFpsFO6WlK5lXNm",
     phone: "13600000001",
-    email: "user@react.com",
+    email: "user4@bjtu.edu.com",
     desc: "普通管理员4",
     conditions: 1,
     roles: [2],
@@ -59,7 +47,7 @@ const users = [
   {
     id: 5,
     username: "user",
-    password: "123456",
+    password: "$2a$10$zt6dUMTjNSyzINTGyiAgluna3mPm7qdgl26vj4tFpsFO6WlK5lXNm",
     phone: "13600000001",
     email: "user@react.com",
     desc: "普通管理员5",
@@ -82,50 +70,80 @@ const menus = [
   },
   {
     id: 2,
-    title: "系统管理",
-    icon: "icon-setting",
-    url: "/system",
+    title: "商品",
+    icon: "icon-goods",
+    url: "/goods",
     parent: null,
-    desc: "系统管理目录分支",
+    desc: "商品目录分支",
     sorts: 1,
     conditions: 1,
   },
   {
     id: 3,
+    title: "订单",
+    icon: "icon-order",
+    url: "/order",
+    parent: null,
+    desc: "订单目录分支",
+    sorts: 2,
+    conditions: 1,
+  },
+  {
+    id: 4,
+    title: "营销",
+    icon: "icon-marketing",
+    url: "/marketing",
+    parent: null,
+    desc: "营销目录分支",
+    sorts: 3,
+    conditions: 1,
+  },
+  {
+    id: 5,
+    title: "系统管理",
+    icon: "icon-setting",
+    url: "/system",
+    parent: null,
+    desc: "系统管理目录分支",
+    sorts: 4,
+    conditions: 1,
+  },
+  {
+    id: 6,
     title: "用户管理",
     icon: "icon-user",
     url: "/system/useradmin",
-    parent: 2,
+    parent: 5,
     desc: "系统管理/用户管理",
     sorts: 0,
     conditions: 1,
   },
   {
-    id: 4,
+    id: 7,
     title: "角色管理",
     icon: "icon-team",
     url: "/system/roleadmin",
-    parent: 2,
+    parent: 5,
     desc: "系统管理/角色管理",
     sorts: 1,
     conditions: 1,
   },
   {
-    id: 5,
+    id: 8,
     title: "权限管理",
     icon: "icon-safetycertificate",
     url: "/system/poweradmin",
-    parent: 2,
+    parent: 5,
     desc: "系统管理/权限管理",
     sorts: 2,
     conditions: 1,
   },
   {
-    id: 6,
+    id: 9,
     title: "菜单管理",
     icon: "icon-appstore",
     url: "/system/menuadmin",
-    parent: 2,
+    parent: 5,
     desc: "系统管理/菜单管理",
     sorts: 3,
     conditions: 1,
@@ -305,49 +323,55 @@ const roles = [
   {
     id: 1,
     title: "超级管理员",
-    desc: "超级管理员拥有所有权限",
+    desc: "所有权限都拥有",
     sorts: 1,
     conditions: 1,
     menuAndPowers: [
       { menuId: 1, powers: [] },
       { menuId: 2, powers: [] },
-      { menuId: 3, powers: [1, 2, 3, 4, 5] },
-      { menuId: 4, powers: [6, 7, 8, 9, 18] },
-      { menuId: 5, powers: [10, 11, 12, 13] },
-      { menuId: 6, powers: [14, 15, 16, 17] },
+      { menuId: 3, powers: [] },
+      { menuId: 4, powers: [] },
+      { menuId: 5, powers: [] },
+      { menuId: 6, powers: [1, 2, 3, 4, 5] },
+      { menuId: 7, powers: [6, 7, 8, 9, 18] },
+      // { menuId: 8, powers: [10, 11, 12, 13] },
+      { menuId: 9, powers: [14, 15, 16, 17] },
     ],
   },
   {
     id: 2,
     title: "普通管理员",
-    desc: "普通管理员",
+    desc: "仅可查看",
     sorts: 2,
     conditions: 1,
     menuAndPowers: [
       { menuId: 1, powers: [] },
       { menuId: 2, powers: [] },
-      { menuId: 3, powers: [3] },
-      { menuId: 4, powers: [6, 7, 8, 18] },
-      { menuId: 5, powers: [10, 11, 12] },
-      { menuId: 6, powers: [14, 15, 16] },
+      { menuId: 3, powers: [] },
+      { menuId: 4, powers: [] },
+      { menuId: 5, powers: [] },
+      { menuId: 6, powers: [3] },
+      { menuId: 7, powers: [6, 7, 8, 18] },
+      // { menuId: 5, powers: [10, 11, 12] },
+      // { menuId: 6, powers: [14, 15, 16] },
     ],
   },
   {
     id: 3,
-    title: "运维人员",
-    desc: "运维人员不能删除对象",
+    title: "普通用户",
+    desc: "正常完成购物等场景",
     sorts: 3,
     conditions: 1,
     menuAndPowers: [
       { menuId: 1, powers: [] },
       { menuId: 2, powers: [] },
-      { menuId: 3, powers: [3] },
-      { menuId: 4, powers: [7, 8] },
-      { menuId: 5, powers: [11, 12] },
-      { menuId: 6, powers: [15, 16] },
+      { menuId: 3, powers: [] },
+      { menuId: 4, powers: [] },
+      { menuId: 5, powers: [] },
     ],
   },
 ];
+
 
 /**
  * 工具 - decode
@@ -363,9 +387,6 @@ const decode = function (str) {
   }
 };
 
-/**
- * 方法
- * **/
 // 登录
 const onLogin = function (p) {
   const u = users.find(function (item) {
@@ -376,16 +397,42 @@ const onLogin = function (p) {
   } else if (u.password !== p.password) {
     return { status: 204, data: null, message: "密码错误" };
   }
+
   return { status: 200, data: u, message: "登录成功" };
 };
+// const onLogin = function (p) {
+//   const u = users.find(function (item) {
+//     return item.username === p.username;
+//   });
+//   if (!u) {
+//     return { status: 204, data: null, message: "该用户不存在" };
+//   } 
+  
+//   console.log(p.password, u.password);
+//   return new Promise((resolve, reject) => {
+//     bcrypt.compare(p.password, u.password, function(err, result) {
+//       if (err) {
+//         reject(err);
+//       } else if (result) {
+//         resolve({ status: 200, data: u, message: "登录成功" });
+//       } else {
+//         resolve({ status: 204, data: null, message: "密码错误" });
+//       }
+//     });
+//   });
+// };
+
 // 获取所有菜单
 const getMenus = function (p) {
+  console.log(p)
   return { status: 200, data: menus, message: "success" };
 };
+
+
 // 获取菜单（根据ID）
 const getMenusById = function (p) {
-  // const p = JSON.parse(request.body);
   let res = [];
+  console.info(p)
   if (p.id instanceof Array) {
     res = menus.filter(function (item) {
       return p.id.includes(item.id);

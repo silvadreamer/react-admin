@@ -1,25 +1,14 @@
 /** 登录页 **/
-
-// ==================
-// 所需的各种插件
-// ==================
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import tools from "@/util/tools";
-
-// ==================
-// 所需的所有组件
-// ==================
 import Vcode from "react-vcode";
 import { Form, Input, Button, Checkbox, message } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import CanvasBack from "@/components/CanvasBack";
 import LogoImg from "@/assets/logo.png";
 
-// ==================
-// 类型声明
-// ==================
 import { Dispatch } from "@/store";
 import {
   Role,
@@ -31,23 +20,17 @@ import {
 } from "@/models/index.type";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
-// ==================
-// CSS
-// ==================
 import "./index.less";
 
-// ==================
-// 本组件
-// ==================
 function LoginContainer(): JSX.Element {
   const dispatch = useDispatch<Dispatch>();
 
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false); // 是否正在登录中
-  const [rememberPassword, setRememberPassword] = useState(false); // 是否记住密码
-  const [codeValue, setCodeValue] = useState("00000"); // 当前验证码的值
-  const [show, setShow] = useState(false); // 加载完毕时触发动画
+  const [loading, setLoading] = useState(false); 
+  const [rememberPassword, setRememberPassword] = useState(false); 
+  const [codeValue, setCodeValue] = useState("00000");
+  const [show, setShow] = useState(false); 
 
   // 进入登陆页时，判断之前是否保存了用户名和密码
   useEffect(() => {
@@ -198,8 +181,7 @@ function LoginContainer(): JSX.Element {
       <div className={show ? "loginBox show" : "loginBox"}>
         <Form form={form}>
           <div className="title">
-            <img src={LogoImg} alt="logo" />
-            <span>React-Admin</span>
+            <span>商城管理系统</span>
           </div>
           <div>
             <Form.Item
