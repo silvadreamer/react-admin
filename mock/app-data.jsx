@@ -1,9 +1,8 @@
 
-// ID序列
 let id_sequence = 1000;
 
 // 所有的用户数据
-const users = [
+let users = [
   {
     id: 1,
     username: "admin",
@@ -57,7 +56,7 @@ const users = [
 ];
 
 // 所有的菜单数据
-const menus = [
+let menus = [
   {
     id: 1,
     title: "首页",
@@ -128,18 +127,18 @@ const menus = [
     sorts: 1,
     conditions: 1,
   },
+  // {
+  //   id: 8,
+  //   title: "权限管理",
+  //   icon: "icon-safetycertificate",
+  //   url: "/system/poweradmin",
+  //   parent: 5,
+  //   desc: "系统管理/权限管理",
+  //   sorts: 2,
+  //   conditions: 1,
+  // },
   {
     id: 8,
-    title: "权限管理",
-    icon: "icon-safetycertificate",
-    url: "/system/poweradmin",
-    parent: 5,
-    desc: "系统管理/权限管理",
-    sorts: 2,
-    conditions: 1,
-  },
-  {
-    id: 9,
     title: "菜单管理",
     icon: "icon-appstore",
     url: "/system/menuadmin",
@@ -151,7 +150,7 @@ const menus = [
 ];
 
 // 所有的权限数据
-const powers = [
+let powers = [
   {
     id: 1,
     menu: 3,
@@ -319,7 +318,7 @@ const powers = [
   },
 ];
 // 所有的角色数据
-const roles = [
+let roles = [
   {
     id: 1,
     title: "超级管理员",
@@ -335,7 +334,7 @@ const roles = [
       { menuId: 6, powers: [1, 2, 3, 4, 5] },
       { menuId: 7, powers: [6, 7, 8, 9, 18] },
       // { menuId: 8, powers: [10, 11, 12, 13] },
-      { menuId: 9, powers: [14, 15, 16, 17] },
+      { menuId: 8, powers: [14, 15, 16, 17] },
     ],
   },
   {
@@ -367,10 +366,47 @@ const roles = [
       { menuId: 2, powers: [] },
       { menuId: 3, powers: [] },
       { menuId: 4, powers: [] },
-      { menuId: 5, powers: [] },
     ],
   },
 ];
+
+if(!localStorage.getItem("users")) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
+else
+{
+  users = JSON.parse(localStorage.getItem("users"));
+}
+if(!localStorage.getItem("menus")) {
+  localStorage.setItem("menus", JSON.stringify(menus));
+}
+else
+{
+  menus = JSON.parse(localStorage.getItem("menus"));
+}
+if(!localStorage.getItem("powers")) {
+  localStorage.setItem("powers", JSON.stringify(powers));
+}
+else
+{
+  powers = JSON.parse(localStorage.getItem("powers"));
+
+}
+if(!localStorage.getItem("roles")) {
+  localStorage.setItem("roles", JSON.stringify(roles));
+}
+else
+{
+  roles = JSON.parse(localStorage.getItem("roles"));
+}
+
+// localStorage.setItem("users", JSON.stringify(users));
+// localStorage.setItem("menus", JSON.stringify(menus));
+// localStorage.setItem("powers", JSON.stringify(powers));
+// localStorage.setItem("roles", JSON.stringify(roles));
+
+
+// export { AppDataContext, AppDataProvider };
 
 
 /**
@@ -389,7 +425,8 @@ const decode = function (str) {
 
 // 登录
 const onLogin = function (p) {
-  const u = users.find(function (item) {
+  const local_users = JSON.parse(localStorage.getItem("users")) || [];
+  const u = local_users.find(function (item) {
     return item.username === p.username;
   });
   if (!u) {
@@ -425,7 +462,8 @@ const onLogin = function (p) {
 // 获取所有菜单
 const getMenus = function (p) {
   console.log(p)
-  return { status: 200, data: menus, message: "success" };
+  return { status: 200, data: JSON.parse(localStorage.getItem("menus")), message: "success" };
+  // return { status: 200, data: menus, message: "success" };
 };
 
 
@@ -434,11 +472,13 @@ const getMenusById = function (p) {
   let res = [];
   console.info(p)
   if (p.id instanceof Array) {
-    res = menus.filter(function (item) {
+    const local_menus = JSON.parse(localStorage.getItem("menus"));
+    res = local_menus.filter(function (item) {
       return p.id.includes(item.id);
     });
   } else {
-    const t = menus.find(function (item) {
+    const local_menus = JSON.parse(localStorage.getItem("menus"));
+    const t = local_menus.find(function (item) {
       return item.id === p.id;
     });
     res.push(t);
@@ -450,19 +490,26 @@ const getMenusById = function (p) {
 const addMenu = function (p) {
   // const p = JSON.parse(request.body);
   p.id = ++id_sequence;
-  menus.push(p);
-  return { status: 200, data: menus, message: "添加成功" };
+  localStorage.setItem("menus", JSON.stringify([...menus, p]));
+  //menus.push(p);
+  return { status: 200, data: JSON.parse(localStorage.getItem("menus")), message: "添加成功" };
+  // return { status: 200, data: menus, message: "添加成功" };
 };
+
 // 修改菜单
 const upMenu = function (p) {
-  // const p = JSON.parse(request.body);
-  const oldIndex = menus.findIndex(function (item) {
+  const local_menus = JSON.parse(localStorage.getItem("menus"));
+  const oldIndex = local_menus.findIndex(function (item) {
     return item.id === p.id;
   });
   if (oldIndex !== -1) {
-    const news = Object.assign({}, menus[oldIndex], p);
-    menus.splice(oldIndex, 1, news);
-    return { status: 200, data: menus, message: "success" };
+    const news = Object.assign({}, localStorage.getItem("menus")[oldIndex], p);
+    localStorage.setItem("menus", JSON.stringify([...menus.slice(0, oldIndex), news, ...menus.slice(oldIndex + 1)]));
+    
+    // const news = Object.assign({}, menus[oldIndex], p);
+    // menus.splice(oldIndex, 1, news);
+    return { status: 200, data: JSON.parse(localStorage.getItem("menus")), message: "success" };
+    // return { status: 200, data: menus, message: "success" };
   } else {
     return { status: 204, data: null, message: "未找到该条数据" };
   }
@@ -470,17 +517,21 @@ const upMenu = function (p) {
 // 删除菜单
 const delMenu = function (p) {
   // const p = JSON.parse(request.body);
-  const oldIndex = menus.findIndex(function (item) {
+  const local_menus = JSON.parse(localStorage.getItem("menus"));
+  const oldIndex = local_menus.findIndex(function (item) {
     return item.id === p.id;
   });
 
   if (oldIndex !== -1) {
-    const haveChild = menus.findIndex(function (item) {
-      return item.parent === menus[oldIndex].id;
+    const local_menus = JSON.parse(localStorage.getItem("menus"));
+    const haveChild = local_menus.findIndex(function (item) {
+      return item.parent === local_menus[oldIndex].id;
     });
     if (haveChild === -1) {
-      menus.splice(oldIndex, 1);
-      return { status: 200, data: menus, message: "success" };
+      localStorage.setItem("menus", JSON.stringify([...menus.slice(0, oldIndex), ...menus.slice(oldIndex + 1)]));
+
+      // menus.splice(oldIndex, 1);
+      return { status: 200, data: JSON.parse(localStorage.getItem("menus")), message: "success" };
     } else {
       return { status: 204, data: null, message: "该菜单下有子菜单，无法删除" };
     }
@@ -549,12 +600,14 @@ const upPower = function (p) {
 };
 // 删除权限
 const delPower = function (p) {
-  const oldIndex = powers.findIndex(function (item) {
+  const local_powers = JSON.parse(localStorage.getItem("powers"));
+  const oldIndex = local_powers.findIndex(function (item) {
     return item.id === p.id;
   });
 
   if (oldIndex !== -1) {
-    powers.splice(oldIndex, 1);
+    localStorage.setItem("powers", JSON.stringify([...powers.slice(0, oldIndex), ...powers.slice(oldIndex + 1)]));
+//    powers.splice(oldIndex, 1);
     return { status: 200, data: null, message: "success" };
   } else {
     return { status: 204, data: null, message: "未找到该条数据" };
@@ -562,7 +615,8 @@ const delPower = function (p) {
 };
 // 查询角色（分页,条件筛选）
 const getRoles = function (p) {
-  const map = roles.filter(function (item) {
+  const local_roles = JSON.parse(localStorage.getItem("roles"));
+  const map = local_roles.filter(function (item) {
     let yeah = true;
     const title = decode(p.title);
     const conditions = Number(p.conditions);
@@ -586,18 +640,20 @@ const getRoles = function (p) {
 };
 // 查询角色（所有）
 const getAllRoles = function (p) {
-  return { status: 200, data: roles, message: "success" };
+  const local_roles = JSON.parse(localStorage.getItem("roles"));
+  return { status: 200, data: local_roles, message: "success" };
 };
 // 查询角色（通过角色ID）
 const getRoleById = function (p) {
   // const p = JSON.parse(request.body);
   let res = [];
+  const local_roles = JSON.parse(localStorage.getItem("roles"));
   if (p.id instanceof Array) {
-    res = roles.filter(function (item) {
+    res = local_roles.filter(function (item) {
       return p.id.includes(item.id);
     });
   } else {
-    const t = roles.find(function (item) {
+    const t = local_roles.find(function (item) {
       return item.id === p.id;
     });
     res.push(t);
@@ -617,12 +673,14 @@ const addRole = function (p) {
 // 修改角色
 const upRole = function (p) {
   // const p = JSON.parse(request.body);
-  const oldIndex = roles.findIndex(function (item) {
+  const local_roles = JSON.parse(localStorage.getItem("roles"));
+  const oldIndex = local_roles.findIndex(function (item) {
     return item.id === p.id;
   });
   if (oldIndex !== -1) {
-    const news = Object.assign({}, roles[oldIndex], p);
-    roles.splice(oldIndex, 1, news);
+    const news = Object.assign({}, local_roles[oldIndex], p);
+    localStorage.setItem("roles", JSON.stringify([...roles.slice(0, oldIndex), news, ...roles.slice(oldIndex + 1)]));
+//    roles.splice(oldIndex, 1, news);
     return { status: 200, data: null, message: "success" };
   } else {
     return { status: 204, data: null, message: "未找到该条数据" };
@@ -631,25 +689,30 @@ const upRole = function (p) {
 // 删除角色
 const delRole = function (p) {
   // const p = JSON.parse(request.body);
-  const oldIndex = roles.findIndex(function (item) {
+  const local_roles = JSON.parse(localStorage.getItem("roles"));
+  const oldIndex = local_roles.findIndex(function (item) {
     return item.id === p.id;
   });
   if (oldIndex !== -1) {
-    roles.splice(oldIndex, 1);
+    localStorage.setItem("roles", JSON.stringify([...roles.slice(0, oldIndex), ...roles.slice(oldIndex + 1)]));
+//    roles.splice(oldIndex, 1);
     return { status: 200, data: null, message: "success" };
   } else {
     return { status: 204, data: null, message: "未找到该条数据" };
   }
 };
+
 // 根据角色ID查询该角色所拥有的菜单和权限详细信息
 const findAllPowerByRoleId = function (p) {
   // const p = JSON.parse(request.body);
-  const t = roles.find(function (item) {
+  const local_roles = JSON.parse(localStorage.getItem("roles"));
+  const t = local_roles.find(function (item) {
     return item.id === p.id;
   });
   if (t) {
     const res = t.powers.map(function (item, index) {
-      const _menu = menus.find(function (v) {
+      const local_menus = JSON.parse(localStorage.getItem("menus"));
+      const _menu = local_menus.find(function (v) {
         return v.id === item.menuId;
       });
       const _powers = item.powers.map(function (v) {
@@ -682,9 +745,12 @@ const getAllMenusAndPowers = function (p) {
 // 给指定角色分配菜单和权限
 const setPowersByRoleId = function (p) {
   // const p = JSON.parse(request.body);
-  const oldIndex = roles.findIndex(function (item) {
+  const local_roles = JSON.parse(localStorage.getItem("roles"));
+  console.info(local_roles)
+  const oldIndex = local_roles.findIndex(function (item) {
     return item.id === p.id;
   });
+
   if (oldIndex !== -1) {
     const pow = p.menus.map(function (item) {
       return { menuId: item, powers: [] };
@@ -708,7 +774,8 @@ const setPowersByRoleId = function (p) {
       }
     });
 
-    roles[oldIndex].menuAndPowers = pow;
+    local_roles[oldIndex].menuAndPowers = pow;
+    localStorage.setItem("roles", JSON.stringify(local_roles));
     return { status: 200, data: null, message: "success" };
   } else {
     return { status: 204, data: null, message: "未找到该条数据" };
@@ -718,7 +785,8 @@ const setPowersByRoleId = function (p) {
 // 给指定角色分配菜单和权限
 const setPowersByRoleIds = function (ps) {
   ps.forEach(function (p) {
-    const oldIndex = roles.findIndex(function (item) {
+    const local_roles = JSON.parse(localStorage.getItem("roles"));
+    const oldIndex = local_roles.findIndex(function (item) {
       return item.id === p.id;
     });
     if (oldIndex !== -1) {
@@ -743,7 +811,8 @@ const setPowersByRoleIds = function (ps) {
           }
         }
       });
-      roles[oldIndex].menuAndPowers = pow;
+      local_roles[oldIndex].menuAndPowers = pow;
+      localStorage.setItem("roles", JSON.stringify(local_roles));
     }
   });
   return { status: 200, data: null, message: "success" };
@@ -751,7 +820,8 @@ const setPowersByRoleIds = function (ps) {
 
 // 条件分页查询用户列表
 const getUserList = function (p) {
-  const map = users.filter(function (item) {
+  const local_users = JSON.parse(localStorage.getItem("users"));
+  const map = local_users.filter(function (item) {
     let yeah = true;
     const username = decode(p.username);
     const conditions = Number(p.conditions);
@@ -776,18 +846,20 @@ const getUserList = function (p) {
 const addUser = function (p) {
   // const p = JSON.parse(request.body);
   p.id = ++id_sequence;
-  users.push(p);
+  localStorage.setItem("users", JSON.stringify([...users, p]));
+  //users.push(p);
   return { status: 200, data: null, message: "success" };
 };
 // 修改用户
 const upUser = function (p) {
   // const p = JSON.parse(request.body);
-  const oldIndex = users.findIndex(function (item) {
+  const local_users = JSON.parse(localStorage.getItem("users"));
+  const oldIndex = local_users.findIndex(function (item) {
     return item.id === p.id;
   });
   if (oldIndex !== -1) {
-    const news = Object.assign({}, users[oldIndex], p);
-    users.splice(oldIndex, 1, news);
+    const news = Object.assign({}, local_users[oldIndex], p);
+    local_users.splice(oldIndex, 1, news);
     return { status: 200, data: null, message: "success" };
   } else {
     return { status: 204, data: null, message: "未找到该条数据" };
@@ -796,11 +868,12 @@ const upUser = function (p) {
 // 删除用户
 const delUser = function (p) {
   // const p = JSON.parse(request.body);
-  const oldIndex = users.findIndex(function (item) {
+  const local_users = JSON.parse(localStorage.getItem("users"));
+  const oldIndex = local_users.findIndex(function (item) {
     return item.id === p.id;
   });
   if (oldIndex !== -1) {
-    users.splice(oldIndex, 1);
+    local_users.splice(oldIndex, 1);
     return { status: 200, data: null, message: "success" };
   } else {
     return { status: 204, data: null, message: "未找到该条数据" };

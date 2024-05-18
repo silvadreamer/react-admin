@@ -313,7 +313,7 @@ function MenuAdminContainer() {
       },
     },
     {
-      title: "菜单名称",
+      title: "名称",
       dataIndex: "title",
       key: "title",
     },
@@ -326,18 +326,18 @@ function MenuAdminContainer() {
       },
     },
     {
-      title: "描述",
+      title: "菜单详情",
       dataIndex: "desc",
       key: "desc",
     },
+    // {
+    //   title: "父级",
+    //   dataIndex: "parent",
+    //   key: "parent",
+    //   render: (v: number | null) => getNameByParentId(v),
+    // },
     {
-      title: "父级",
-      dataIndex: "parent",
-      key: "parent",
-      render: (v: number | null) => getNameByParentId(v),
-    },
-    {
-      title: "状态",
+      title: "是否启用",
       dataIndex: "conditions",
       key: "conditions",
       render: (v: number) =>
@@ -348,7 +348,7 @@ function MenuAdminContainer() {
         ),
     },
     {
-      title: "操作",
+      title: "编辑操作",
       key: "control",
       width: 120,
       render: (v: number, record: TableRecordData) => {

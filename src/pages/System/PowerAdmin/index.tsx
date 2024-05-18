@@ -1,8 +1,4 @@
-/** 权限管理页 **/
 
-// ==================
-// 第三方库
-// ==================
 import React, { useState, useCallback, useMemo } from "react";
 
 import { useSetState, useMount } from "react-use";

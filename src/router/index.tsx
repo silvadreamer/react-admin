@@ -25,14 +25,9 @@ message.config({
   duration: 2,
 });
 
-// ==================
-// 类型声明
-// ==================
 import { RootState, Dispatch } from "@/store";
 
-// ==================
-// 异步加载各路由模块
-// ==================
+
 const [
   NotFound,
   NoPower,
@@ -42,6 +37,9 @@ const [
   PowerAdmin,
   RoleAdmin,
   UserAdmin,
+  Item,
+  Order,
+  Marketing
 ] = [
   () => import("../pages/ErrorPages/404"),
   () => import("../pages/ErrorPages/401"),
@@ -51,25 +49,21 @@ const [
   () => import("../pages/System/PowerAdmin"),
   () => import("../pages/System/RoleAdmin"),
   () => import("../pages/System/UserAdmin"),
+  () => import("../pages/Item"),
+  () => import("../pages/Order"),
+  () => import("../pages/Marketing"),
 ].map((item) => {
   return loadable(item as any, {
     fallback: <Loading />,
   });
 });
 
-// ==================
-// 本组件
-// ==================
 function RouterCom(): JSX.Element {
   const dispatch = useDispatch<Dispatch>();
   const userinfo = useSelector((state: RootState) => state.app.userinfo);
 
   useEffect(() => {
     const userTemp = sessionStorage.getItem("userinfo");
-    /**
-     * sessionStorage中有user信息，但store中没有
-     * 说明刷新了页面，需要重新同步user数据到store
-     * **/
     if (userTemp && !userinfo.userBasicInfo) {
       dispatch.app.setUserInfo(JSON.parse(tools.uncompile(userTemp)));
     }
@@ -99,6 +93,10 @@ function RouterCom(): JSX.Element {
       >
         <Route path="/" element={<Navigate to="home" />} />
         <Route path="home" element={<Home />} />
+        <Route path="goods" element={<Item />} />
+        <Route path="order" element={<Order />} />
+        <Route path="marketing" element={<Marketing />} />
+
         <Route
           path="system/menuadmin"
           element={
@@ -131,7 +129,6 @@ function RouterCom(): JSX.Element {
             </AuthNoPower>
           }
         />
-        <Route path="404" element={<NotFound />} />
         <Route path="401" element={<NoPower />} />
         <Route path="*" element={<Navigate to="404" />} />
       </Route>

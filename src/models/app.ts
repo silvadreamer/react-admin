@@ -3,7 +3,7 @@
  * 在src/store/index.js 中被挂载到store上，命名为 app
  * **/
 
-import axios from "@/util/axios"; // 自己写的工具函数，封装了请求数据的通用接口
+import axios from "@/util/axios"; 
 import { message } from "antd";
 import { Dispatch, RootState } from "@/store";
 import {
@@ -18,12 +18,12 @@ import {
 
 const defaultState: AppState = {
   userinfo: {
-    roles: [], // 当前用户拥有的角色
-    menus: [], // 当前用户拥有的已授权的菜单
-    powers: [], // 当前用户拥有的权限数据
-    userBasicInfo: null, // 用户的基础信息，id,用户名...
-  }, // 当前用户基本信息
-  powersCode: [], // 当前用户拥有的权限code列表(仅保留了code)，页面中的按钮的权限控制将根据此数据源判断
+    roles: [], 
+    menus: [], 
+    powers: [],
+    userBasicInfo: null, 
+  },
+  powersCode: [], 
 };
 export default {
   state: defaultState,
@@ -48,10 +48,6 @@ export default {
   },
 
   effects: (dispatch: Dispatch) => ({
-    /**
-     * 登录
-     * @param { username, password } params
-     * */
     async onLogin(params: { username: string; password: string }) {
       try {
         const res: Res = await axios.post("/api/login", params);
@@ -61,10 +57,7 @@ export default {
       }
       return;
     },
-    /**
-     * 退出登录
-     * @param null
-     * **/
+
     async onLogout() {
       try {
         // 同 dispatch.app.reducerLogout();
@@ -77,10 +70,7 @@ export default {
       }
       return;
     },
-    /**
-     * 设置用户信息
-     * @param: {*} params
-     * **/
+
     async setUserInfo(params: UserInfo) {
       dispatch.app.reducerUserInfo(params);
       return "success";

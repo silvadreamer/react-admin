@@ -66,14 +66,6 @@ import {
 } from "./index.type";
 import { RootState, Dispatch } from "@/store";
 
-// ==================
-// CSS
-// ==================
-import "./index.less";
-
-// ==================
-// 本组件
-// ==================
 function UserAdminContainer(): JSX.Element {
   const dispatch = useDispatch<Dispatch>();
   const userinfo = useSelector((state: RootState) => state.app.userinfo);

@@ -1,8 +1,4 @@
-/** Role 系统管理/角色管理 **/
 
-// ==================
-// 第三方库
-// ==================
 import React, { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useSetState, useMount } from "react-use";
@@ -28,14 +24,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 
-// ==================
-// 自定义的东西
-// ==================
 import tools from "@/util/tools"; // 工具
-
-// ==================
-// 所需的组件
-// ==================
 import PowerTreeCom from "@/components/TreeChose/PowerTreeTable";
 
 const { TextArea } = Input;
@@ -51,9 +40,6 @@ const formItemLayout = {
   },
 };
 
-// ==================
-// 类型声明
-// ==================
 import { RootState, Dispatch } from "@/store";
 import { PowerTreeDefault } from "@/components/TreeChose/PowerTreeTable";
 import {
@@ -68,14 +54,7 @@ import {
   Res,
 } from "./index.type";
 
-// ==================
-// CSS
-// ==================
-import "./index.less";
 
-// ==================
-// 本组件
-// ==================
 function RoleAdminContainer() {
   const dispatch = useDispatch<Dispatch>();
   const p = useSelector((state: RootState) => state.app.powersCode);
@@ -115,18 +94,15 @@ function RoleAdminContainer() {
     powerTreeDefault: { menus: [], powers: [] },
   });
 
-  // 生命周期 - 首次加载组件时触发
   useMount(() => {
     getData(page);
     getPowerTreeData();
   });
 
-  // 函数 - 获取所有的菜单权限数据，用于分配权限控件的原始数据
   const getPowerTreeData = () => {
     dispatch.sys.getAllMenusAndPowers();
   };
 
-  // 函数- 查询当前页面所需列表数据
   const getData = async (page: { pageNum: number; pageSize: number }) => {
     if (!p.includes("role:query")) {
       return;
@@ -155,14 +131,12 @@ function RoleAdminContainer() {
     }
   };
 
-  // 搜索 - 名称输入框值改变时触发
   const searchTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length < 20) {
       setSearchInfo({ title: e.target.value });
     }
   };
 
-  // 搜索 - 状态下拉框选择时触发
   const searchConditionsChange = (v: number) => {
     setSearchInfo({ conditions: v });
   };
@@ -172,11 +146,6 @@ function RoleAdminContainer() {
     getData(page);
   };
 
-  /**
-   * 添加/修改/查看 模态框出现
-   * @param data 当前选中的那条数据
-   * @param type add添加/up修改/see查看
-   * **/
   const onModalShow = (data: TableRecordData | null, type: operateType) => {
     setModal({
       modalShow: true,
@@ -185,10 +154,8 @@ function RoleAdminContainer() {
     });
     setTimeout(() => {
       if (type === "add") {
-        // 新增，需重置表单各控件的值
         form.resetFields();
       } else {
-        // 查看或修改，需设置表单各控件的值为当前所选中行的数据
         form.setFieldsValue({
           formConditions: data?.conditions,
           formDesc: data?.desc,
@@ -199,7 +166,6 @@ function RoleAdminContainer() {
     });
   };
 
-  /** 模态框确定 **/
   const onOk = async () => {
     if (modal.operateType === "see") {
       onClose();
@@ -218,13 +184,12 @@ function RoleAdminContainer() {
         conditions: values.formConditions,
       };
       if (modal.operateType === "add") {
-        // 新增
         try {
           const res: Res = await dispatch.sys.addRole(params);
           if (res && res.status === 200) {
             message.success("添加成功");
             getData(page);
-            dispatch.app.updateUserInfo(null); // 角色信息有变化，立即更新当前用户信息
+            dispatch.app.updateUserInfo(null); 
             onClose();
           }
         } finally {
@@ -233,7 +198,6 @@ function RoleAdminContainer() {
           });
         }
       } else {
-        // 修改
         params.id = modal?.nowData?.id;
         try {
           const res: Res = await dispatch.sys.upRole(params);
@@ -250,11 +214,9 @@ function RoleAdminContainer() {
         }
       }
     } catch {
-      // 未通过校验
     }
   };
 
-  // 删除某一条数据
   const onDel = async (id: number) => {
     setLoading(true);
     try {
@@ -271,15 +233,13 @@ function RoleAdminContainer() {
     }
   };
 
-  /** 模态框关闭 **/
   const onClose = () => {
     setModal({ modalShow: false });
   };
 
-  /** 分配权限按钮点击，权限控件出现 **/
   const onAllotPowerClick = (record: TableRecordData) => {
     const menus = record.menuAndPowers.map((item) => item.menuId); // 需默认选中的菜单项ID
-    // 需默认选中的权限ID
+
     const powers = record.menuAndPowers.reduce(
       (v1, v2) => [...v1, ...v2.powers],
       [] as number[]
@@ -291,7 +251,6 @@ function RoleAdminContainer() {
     });
   };
 
-  // 权限树确定 给角色分配菜单和权限
   const onPowerTreeOk = async (arr: PowerTreeDefault) => {
     if (!modal?.nowData?.id) {
       message.error("该数据没有ID");
@@ -318,19 +277,16 @@ function RoleAdminContainer() {
     }
   };
 
-  // 关闭菜单树
   const onPowerTreeClose = () => {
     setPower({
       powerTreeShow: false,
     });
   };
 
-  // 表单页码改变
   const onTablePageChange = (pageNum: number, pageSize: number | undefined) => {
     getData({ pageNum, pageSize: pageSize || page.pageSize });
   };
 
-  // 构建字段
   const tableColumns = [
     {
       title: "序号",
@@ -343,7 +299,7 @@ function RoleAdminContainer() {
       key: "title",
     },
     {
-      title: "描述",
+      title: "权限描述",
       dataIndex: "desc",
       key: "desc",
     },
@@ -353,14 +309,14 @@ function RoleAdminContainer() {
       key: "sorts",
     },
     {
-      title: "状态",
+      title: "是否启用",
       dataIndex: "conditions",
       key: "conditions",
       render: (v: number) =>
         v === 1 ? (
-          <span style={{ color: "green" }}>启用</span>
+          <span style={{ color: "blue" }}>启用中</span>
         ) : (
-          <span style={{ color: "red" }}>禁用</span>
+          <span style={{ color: "yellow" }}>禁用中</span>
         ),
     },
     {
@@ -369,18 +325,6 @@ function RoleAdminContainer() {
       width: 200,
       render: (v: number, record: TableRecordData) => {
         const controls = [];
-        p.includes("role:query") &&
-          controls.push(
-            <span
-              key="0"
-              className="control-btn green"
-              onClick={() => onModalShow(record, "see")}
-            >
-              <Tooltip placement="top" title="查看">
-                <EyeOutlined />
-              </Tooltip>
-            </span>
-          );
         p.includes("role:up") &&
           controls.push(
             <span
@@ -483,8 +427,8 @@ function RoleAdminContainer() {
                 onChange={searchConditionsChange}
                 value={searchInfo.conditions}
               >
-                <Option value={1}>启用</Option>
-                <Option value={-1}>禁用</Option>
+                <Option value={1}>启用中</Option>
+                <Option value={-1}>禁用中</Option>
               </Select>
             </li>
             <li>
@@ -514,7 +458,7 @@ function RoleAdminContainer() {
           }}
         />
       </div>
-      {/* 新增&修改&查看 模态框 */}
+
       <Modal
         title={{ add: "新增", up: "修改", see: "查看" }[modal.operateType]}
         open={modal.modalShow}

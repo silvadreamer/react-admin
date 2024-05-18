@@ -1,9 +1,6 @@
-/** 当前页面所需所有类型声明 **/
-
 import { Menu } from "@/models/index.type";
 export type { Menu, MenuParam } from "@/models/index.type";
 
-// 构建table所需数据
 export interface TableRecordData extends Menu {
   key: number;
   serial: number;
@@ -19,14 +16,14 @@ export type ModalType = {
 };
 
 export interface TreeSourceData {
-  id: number; // ID,添加时可以没有id
+  id: number;
   key: string | number;
-  title: string; // 标题
-  icon: string; // 图标
-  url: string; // 链接路径
-  parent: number | null; // 父级ID
-  desc: string; // 描述
-  sorts: number; // 排序编号
-  conditions: number; // 状态，1启用，-1禁用
-  children?: TreeSourceData[]; // 子菜单
+  title: string; 
+  icon: string; 
+  url: string; 
+  parent: number | null;
+  desc: string; 
+  sorts: number; 
+  conditions: number; 
+  children?: TreeSourceData[];
 }
