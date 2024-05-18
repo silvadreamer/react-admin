@@ -7,43 +7,38 @@ import { cloneDeep } from "lodash";
 
 const { Sider } = Layout;
 
-import "./index.less";
+import "./index.css";
 import Icon from "@/components/Icon";
 import type { Menu } from "@/models/index.type";
 import type { ItemType } from "antd/lib/menu/hooks/useItems";
 
 interface Props {
-  data: Menu[]; // 所有的菜单数据
-  collapsed: boolean; // 菜单咱开还是收起
+  data: Menu[];
+  collapsed: boolean;
 }
 
 export default function MenuCom(props: Props): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
-  const [chosedKey, setChosedKey] = useState<string[]>([]); // 当前选中
-  const [openKeys, setOpenKeys] = useState<string[]>([]); // 当前需要被展开的项
+  const [chosedKey, setChosedKey] = useState<string[]>([]);
+  const [openKeys, setOpenKeys] = useState<string[]>([]); 
 
-  // 当页面路由跳转时，即location发生改变，则更新选中项
   useEffect(() => {
     const paths = location.pathname.split("/").filter((item) => !!item);
     setChosedKey([location.pathname]);
     setOpenKeys(paths.map((item) => `/${item}`));
   }, [location]);
 
-
-  // 菜单被选择
   const onSelect = (e: any) => {
     if (e?.key) {
       navigate(e.key);
     }
   };
 
-  // 工具 - 递归将扁平数据转换为层级数据
   const dataToJson = useCallback(
     (one: Menu | undefined, data: Menu[]): Menu[] | undefined => {
       let kids;
       if (!one) {
-        // 第1次递归
         kids = data.filter((item: Menu) => !item.parent);
       } else {
         kids = data.filter((item: Menu) => item.parent === one.id);
@@ -54,7 +49,6 @@ export default function MenuCom(props: Props): JSX.Element {
     []
   );
 
-  // 构建树结构
   const makeTreeDom = useCallback((data: Menu[]): any => {
     return data.map((item: Menu) => {
       if (item.children) {
@@ -85,14 +79,8 @@ export default function MenuCom(props: Props): JSX.Element {
     });
   }, []);
 
-  // ==================
-  // 计算属性 memo
-  // ==================
-
-  /** 处理原始数据，将原始数据处理为层级关系 **/
   const treeDom: ItemType[] = useMemo(() => {
     const d: Menu[] = cloneDeep(props.data);
-    // 按照sort排序
     d.sort((a, b) => {
       return a.sorts - b.sorts;
     });

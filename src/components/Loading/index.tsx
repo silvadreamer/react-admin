@@ -1,9 +1,5 @@
-/**
- * Loading组件
- * 用于按需加载时过渡显示等
- */
 import React from "react";
-import "./index.less";
+import "./index.css";
 import ImgLoading from "@/assets/loading.gif";
 
 export default function LoadingComponent(): JSX.Element {

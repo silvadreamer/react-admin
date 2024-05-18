@@ -1,9 +1,8 @@
-/** 通用动态面包屑 **/
 import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { Breadcrumb } from "antd";
 import { EnvironmentOutlined } from "@ant-design/icons";
-import "./index.less";
+import "./index.css";
 import { Menu } from "@/models/index.type";
 
 interface Props {
@@ -12,8 +11,6 @@ interface Props {
 
 export default function BreadCom(props: Props): JSX.Element {
   const location = useLocation();
-
-  /** 根据当前location动态生成对应的面包屑 **/
   const breads = useMemo(() => {
     const paths: string = location.pathname;
     const breads: JSX.Element[] = [];

@@ -18,7 +18,7 @@ import {
 } from "@/models/index.type";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
-import "./index.less";
+import "./index.css";
 
 function LoginContainer(): JSX.Element {
   const dispatch = useDispatch<Dispatch>();

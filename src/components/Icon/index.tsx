@@ -1,5 +1,3 @@
-/* 用于菜单的自定义图标 */
-import React from "react";
 import { createFromIconfontCN } from "@ant-design/icons";
 
 const IconFont = createFromIconfontCN({

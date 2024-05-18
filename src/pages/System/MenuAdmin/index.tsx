@@ -330,21 +330,15 @@ function MenuAdminContainer() {
       dataIndex: "desc",
       key: "desc",
     },
-    // {
-    //   title: "父级",
-    //   dataIndex: "parent",
-    //   key: "parent",
-    //   render: (v: number | null) => getNameByParentId(v),
-    // },
     {
       title: "是否启用",
       dataIndex: "conditions",
       key: "conditions",
       render: (v: number) =>
         v === 1 ? (
-          <span style={{ color: "green" }}>启用</span>
+          <span style={{ color: "blue" }}>启用中</span>
         ) : (
-          <span style={{ color: "red" }}>禁用</span>
+          <span style={{ color: "yellow" }}>禁用中</span>
         ),
     },
     {
@@ -353,19 +347,6 @@ function MenuAdminContainer() {
       width: 120,
       render: (v: number, record: TableRecordData) => {
         const controls = [];
-
-        p.includes("menu:query") &&
-          controls.push(
-            <span
-              key="0"
-              className="control-btn green"
-              onClick={() => onModalShow(record, "see")}
-            >
-              <Tooltip placement="top" title="查看">
-                <EyeOutlined />
-              </Tooltip>
-            </span>
-          );
         p.includes("menu:up") &&
           controls.push(
             <span
@@ -430,7 +411,7 @@ function MenuAdminContainer() {
   return (
     <div className="page-menu-admin">
       <div className="l">
-        <div className="title">目录结构</div>
+        <div className="title">目录略缩</div>
         <div>
           <Tree onSelect={onTreeSelect} treeData={sourceData} />
         </div>
@@ -445,7 +426,7 @@ function MenuAdminContainer() {
                 onClick={() => onModalShow(null, "add")}
                 disabled={!p.includes("menu:add")}
               >
-                {`添加${treeSelect.title || "根级"}子菜单`}
+                {`添加${treeSelect.title || ""}子菜单`}
               </Button>
             </li>
           </ul>

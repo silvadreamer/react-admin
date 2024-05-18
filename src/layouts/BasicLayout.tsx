@@ -1,17 +1,9 @@
-/** 基础页面结构 - 有头部、底部、侧边导航 **/
-
-// ==================
-// 第三方库
-// ==================
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Outlet } from "react-router-dom";
 import { Layout, message } from "antd";
 
-// ==================
-// 自定义的东西
-// ==================
-import "./BasicLayout.less";
+import "./BasicLayout.css";
 
 // ==================
 // 组件

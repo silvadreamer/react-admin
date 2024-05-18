@@ -1,15 +1,9 @@
-/** 权限Table树 **/
 
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Modal, Table, Checkbox, Spin } from "antd";
 import { Power, PowerTree } from "@/models/index.type";
 import { cloneDeep } from "lodash";
 
-// ==================
-// 类型声明
-// ==================
-
-// 默认被选中的菜单和权限
 export type PowerTreeDefault = {
   menus: number[];
   powers: number[];
@@ -22,9 +16,9 @@ export type PowerLevel = PowerTree & {
 };
 
 interface Props {
-  title: string; // 指定模态框标题
-  data: PowerTree[]; // 所有的菜单&权限原始数据
-  defaultChecked: PowerTreeDefault; // 需要默认选中的项
+  title: string; 
+  data: PowerTree[]; 
+  defaultChecked: PowerTreeDefault;
   modalShow: boolean; // 是否显示
   initloading?: boolean; // 初始化时，树是否处于加载中状态
   loading: boolean; // 提交表单时，树的确定按钮是否处于等待状态
@@ -32,28 +26,16 @@ interface Props {
   onOk: (res: PowerTreeDefault) => void; // 确定选择，将所选项信息返回上级
 }
 
-// ==================
-// 本组件 用于角色授权的树形表格
-// ==================
+
 export default function TreeTable(props: Props): JSX.Element {
-  const [treeChecked, setTreeChecked] = useState<number[]>([]); // 受控，所有被选中的表格行
-  const [btnDtoChecked, setBtnDtoChecked] = useState<number[]>([]); // 受控，所有被选中的权限数据
+  const [treeChecked, setTreeChecked] = useState<number[]>([]); 
+  const [btnDtoChecked, setBtnDtoChecked] = useState<number[]>([]); 
 
-  // ==================
-  // 副作用
-  // ==================
-
-  // 哪些需要被默认选中
   useEffect(() => {
     setTreeChecked(props.defaultChecked.menus || []);
     setBtnDtoChecked(props.defaultChecked.powers || []);
   }, [props.defaultChecked]);
 
-  // ==================
-  // 私有方法
-  // ==================
-
-  // 提交
   const onOk = useCallback(() => {
     props.onOk?.({
       menus: treeChecked,
@@ -61,12 +43,11 @@ export default function TreeTable(props: Props): JSX.Element {
     });
   }, [props, btnDtoChecked, treeChecked]);
 
-  // 关闭模态框
+
   const onClose = useCallback(() => {
     props.onClose();
   }, [props]);
 
-  // 被选中的权限 受控
   const dtoIsChecked = useCallback(
     (id: number): boolean => {
       return !!btnDtoChecked.find((item) => item === id);
@@ -74,21 +55,17 @@ export default function TreeTable(props: Props): JSX.Element {
     [btnDtoChecked]
   );
 
-  // TABLE btn权限选中和取消选中，需要记录哪些被选中 id/title/powers
   const onBtnDtoChange = useCallback(
     (e: any, id: number, record: PowerLevel) => {
       console.log("哈？", record);
       const old = [...btnDtoChecked];
       let treeCheckedTemp = [...treeChecked];
       if (e.target.checked) {
-        // 选中
         old.push(id);
         treeCheckedTemp = Array.from(new Set([record.id, ...treeChecked]));
       } else {
-        // 取消选中
         old.splice(old.indexOf(id), 1);
 
-        // 判断当前这一行的权限中是否还有被选中的，如果全都没有选中，那当前菜单也要取消选中
         const tempMap = record.powers.map((item: Power) => item.id);
         if (
           !btnDtoChecked.some(
@@ -105,12 +82,10 @@ export default function TreeTable(props: Props): JSX.Element {
     [btnDtoChecked, treeChecked]
   );
 
-  // 工具 - 递归将扁平数据转换为层级数据
   const dataToJson = useCallback(
     (one: PowerLevel | undefined, data: PowerLevel[]) => {
       let kids;
       if (!one) {
-        // 第1次递归
         kids = data.filter((item: PowerLevel) => !item.parent);
       } else {
         kids = data.filter((item: PowerLevel) => item.parent === one.id);
@@ -124,11 +99,6 @@ export default function TreeTable(props: Props): JSX.Element {
     []
   );
 
-  // ==================
-  // 计算属性 memo
-  // ==================
-
-  // 工具 - 赋值Key
   const makeKey = useCallback((data: PowerTree[]) => {
     const newData: PowerLevel[] = [];
     for (let i = 0; i < data.length; i++) {
@@ -145,12 +115,9 @@ export default function TreeTable(props: Props): JSX.Element {
     return newData;
   }, []);
 
-  // 处理原始数据，将原始数据处理为层级关系(菜单的层级关系)
   const sourceData = useMemo(() => {
     const powerData: PowerTree[] = cloneDeep(props.data);
-    // 这应该递归，把children数据也赋值key
     const d: PowerLevel[] = makeKey(powerData);
-    // 按照sort排序
     d.sort((a, b) => {
       return a.sorts - b.sorts;
     });
@@ -158,7 +125,6 @@ export default function TreeTable(props: Props): JSX.Element {
     return dataToJson(undefined, d) || [];
   }, [props.data, dataToJson]);
 
-  // TABLE 列表项前面是否有多选框，并配置行为
   type TableData = {
     id: number;
   };
@@ -171,7 +137,6 @@ export default function TreeTable(props: Props): JSX.Element {
       onSelect: (record: TableData, selected: boolean): void => {
         const t = props.data.find((item) => item.id === record.id);
         if (selected) {
-          // 选中，连带其权限全部勾选
           if (t && Array.isArray(t.powers)) {
             const temp = Array.from(
               new Set([...t.powers.map((item) => item.id), ...btnDtoChecked])
@@ -179,7 +144,6 @@ export default function TreeTable(props: Props): JSX.Element {
             setBtnDtoChecked(temp);
           }
         } else {
-          // 取消选中，连带其权限全部取消勾选
           if (t && Array.isArray(t.powers)) {
             const mapTemp = t.powers.map((item) => item.id);
             const temp = btnDtoChecked.filter(
@@ -191,7 +155,6 @@ export default function TreeTable(props: Props): JSX.Element {
       },
       onSelectAll: (selected: boolean) => {
         if (selected) {
-          // 选中
           setBtnDtoChecked(
             props.data.reduce((v1, v2) => {
               return [...v1, ...v2.powers.map((k) => k.id)];
@@ -205,7 +168,6 @@ export default function TreeTable(props: Props): JSX.Element {
     };
   }, [props.data, treeChecked, btnDtoChecked]);
 
-  // TABLE 字段
   const tableColumns = useMemo(() => {
     return [
       {

@@ -29,8 +29,6 @@ import { RootState, Dispatch } from "@/store";
 
 
 const [
-  NotFound,
-  NoPower,
   Login,
   Home,
   MenuAdmin,
@@ -41,8 +39,6 @@ const [
   Order,
   Marketing
 ] = [
-  () => import("../pages/ErrorPages/404"),
-  () => import("../pages/ErrorPages/401"),
   () => import("../pages/Login"),
   () => import("../pages/Home"),
   () => import("../pages/System/MenuAdmin"),
@@ -129,8 +125,6 @@ function RouterCom(): JSX.Element {
             </AuthNoPower>
           }
         />
-        <Route path="401" element={<NoPower />} />
-        <Route path="*" element={<Navigate to="404" />} />
       </Route>
     </Routes>
   );

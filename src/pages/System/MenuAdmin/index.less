@@ -1,53 +1,53 @@
 .page-menu-admin {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
   .l {
-    width: 256px;
-    border: 1px solid #e0e0e0;
+    width: 100%;
+    border: 2px solid #d1d1d1;
     flex: none;
-    background-color: #f7f9fc;
+    background-color: #eaeef3;
     .title {
-      height: 44px;
-      line-height: 44px;
+      height: 50px;
+      line-height: 50px;
       box-sizing: border-box;
-      font-size: 16px;
-      padding: 0 10px;
-      border-bottom: 1px solid #e0e0e0;
-      background-color: #fff;
-      color: #333;
-      font-weight: bold;
+      font-size: 18px;
+      padding: 0 12px;
+      border-bottom: 2px solid #d1d1d1;
+      background-color: #fafafa;
+      color: #2c2c2c;
+      font-weight: 600;
     }
   }
   .r {
-    border: 1px solid #e0e0e0;
-    margin-left: 16px;
+    border: 2px solid #d1d1d1;
+    margin-top: 12px;
     flex: auto;
-    background-color: #fff;
+    background-color: #fafafa;
     .searchBox {
-      padding: 8px;
-      background-color: #f7f9fc;
-      border-bottom: 1px solid #e0e0e0;
+      padding: 10px;
+      background-color: #eaeef3;
+      border-bottom: 2px solid #d1d1d1;
       & > ul {
         display: flex;
-        & > li + li {
-          margin-left: 4px;
-          flex: none;
-        }
-        li {
-          padding: 4px 8px;
+        flex-wrap: wrap;
+        gap: 6px;
+        & > li {
+          padding: 6px 12px;
           background-color: #fff;
-          border: 1px solid #ccc;
-          border-radius: 4px;
+          border: 2px solid #b3b3b3;
+          border-radius: 6px;
           cursor: pointer;
-          transition: background-color 0.3s ease, border-color 0.3s ease;
+          transition: background-color 0.3s, border-color 0.3s;
           &:hover {
-            background-color: #e6f7ff;
-            border-color: #91d5ff;
+            background-color: #d4eaff;
+            border-color: #6bb7ff;
           }
         }
       }
     }
     .ant-table-pagination.ant-pagination {
-      margin-right: 10px;
+      margin-right: 12px;
     }
   }
 }

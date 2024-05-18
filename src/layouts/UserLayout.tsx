@@ -1,8 +1,7 @@
 
-import React from "react";
 import { Outlet } from "react-router-dom";
 import { Layout } from "antd";
-import "./UserLayout.less";
+import "./UserLayout.css";
 
 const { Content } = Layout;
 export default function AppContainer(): JSX.Element {

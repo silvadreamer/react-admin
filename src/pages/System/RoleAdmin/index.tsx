@@ -519,10 +519,10 @@ function RoleAdminContainer() {
           >
             <Select disabled={modal.operateType === "see"}>
               <Option key={1} value={1}>
-                启用
+                启用中
               </Option>
               <Option key={-1} value={-1}>
-                禁用
+                禁用中
               </Option>
             </Select>
           </Form.Item>

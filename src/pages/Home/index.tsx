@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./index.less";
+import "./index.css";
 
 export default function HomePageContainer(): JSX.Element {
   return (
