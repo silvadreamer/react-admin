@@ -1,5 +1,3 @@
-/** 全局唯一数据中心 **/
-
 import { init, Models, RematchDispatch, RematchRootState } from "@rematch/core";
 
 import app from "@/models/app";

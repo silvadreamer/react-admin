@@ -2,7 +2,7 @@ import React from "react";
 
 import "./index.css";
 
-export default function HomePageContainer(): JSX.Element {
+export default function HomePageContainer() {
   return (
     <div className="page-home all_nowarp">
       <div className="box">

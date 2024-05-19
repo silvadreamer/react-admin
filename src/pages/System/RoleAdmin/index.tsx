@@ -63,17 +63,15 @@ function RoleAdminContainer() {
   );
 
   const [form] = Form.useForm();
-  const [data, setData] = useState<Role[]>([]); // 当前页面列表数据
-  const [loading, setLoading] = useState<boolean>(false); // 数据是否正在加载中
+  const [data, setData] = useState<Role[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // 分页相关参数控制
   const [page, setPage] = useSetState<Page>({
     pageNum: 1,
     pageSize: 10,
     total: 0,
   });
 
-  // 模态框相关参数控制
   const [modal, setModal] = useSetState<ModalType>({
     operateType: "add",
     nowData: null,
@@ -81,13 +79,11 @@ function RoleAdminContainer() {
     modalLoading: false,
   });
 
-  // 搜索相关参数
   const [searchInfo, setSearchInfo] = useSetState<SearchInfo>({
-    title: undefined, // 角色名
-    conditions: undefined, // 状态
+    title: undefined,
+    conditions: undefined,
   });
 
-  // 权限树相关参数
   const [power, setPower] = useSetState<PowerTreeInfo>({
     treeOnOkLoading: false,
     powerTreeShow: false,

@@ -19,11 +19,11 @@ interface Props {
   title: string; 
   data: PowerTree[]; 
   defaultChecked: PowerTreeDefault;
-  modalShow: boolean; // 是否显示
-  initloading?: boolean; // 初始化时，树是否处于加载中状态
-  loading: boolean; // 提交表单时，树的确定按钮是否处于等待状态
-  onClose: () => void; // 关闭模态框
-  onOk: (res: PowerTreeDefault) => void; // 确定选择，将所选项信息返回上级
+  modalShow: boolean;
+  initloading?: boolean;
+  loading: boolean;
+  onClose: () => void;
+  onOk: (res: PowerTreeDefault) => void;
 }
 
 

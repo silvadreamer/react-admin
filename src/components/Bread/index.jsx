@@ -3,21 +3,16 @@ import { useLocation } from "react-router-dom";
 import { Breadcrumb } from "antd";
 import { EnvironmentOutlined } from "@ant-design/icons";
 import "./index.css";
-import { Menu } from "@/models/index.type";
 
-interface Props {
-  menus: Menu[];
-}
-
-export default function BreadCom(props: Props): JSX.Element {
+export default function BreadCom(props) {
   const location = useLocation();
   const breads = useMemo(() => {
-    const paths: string = location.pathname;
-    const breads: JSX.Element[] = [];
+    const paths = location.pathname;
+    const breads = [];
 
-    let parentId: number | null = null;
+    let parentId = null;
     do {
-      const pathObj: Menu | undefined = props.menus.find(
+      const pathObj = props.menus.find(
         (v) => v.id === parentId || v.url === paths
       );
 

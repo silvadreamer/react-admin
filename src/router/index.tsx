@@ -1,26 +1,16 @@
-/** 根路由 **/
-
-
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { message } from "antd";
 import loadable from "@loadable/component";
 
-// ==================
-// 自定义的东西
-// ==================
 import tools from "@/util/tools";
 
-// ==================
-// 组件
-// ==================
 import { AuthNoLogin, AuthWithLogin, AuthNoPower } from "./AuthProvider";
 import Loading from "../components/Loading";
 import BasicLayout from "@/layouts/BasicLayout";
 import UserLayout from "@/layouts/UserLayout";
 
-// 全局提示只显示2秒
 message.config({
   duration: 2,
 });
@@ -32,17 +22,15 @@ const [
   Login,
   Home,
   MenuAdmin,
-  PowerAdmin,
   RoleAdmin,
   UserAdmin,
   Item,
   Order,
-  Marketing
+  Marketing,
 ] = [
   () => import("../pages/Login"),
   () => import("../pages/Home"),
   () => import("../pages/System/MenuAdmin"),
-  () => import("../pages/System/PowerAdmin"),
   () => import("../pages/System/RoleAdmin"),
   () => import("../pages/System/UserAdmin"),
   () => import("../pages/Item"),
@@ -93,19 +81,12 @@ function RouterCom(): JSX.Element {
         <Route path="order" element={<Order />} />
         <Route path="marketing" element={<Marketing />} />
 
+
         <Route
           path="system/menuadmin"
           element={
             <AuthNoPower>
               <MenuAdmin />
-            </AuthNoPower>
-          }
-        />
-        <Route
-          path="system/poweradmin"
-          element={
-            <AuthNoPower>
-              <PowerAdmin />
             </AuthNoPower>
           }
         />

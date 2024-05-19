@@ -1,8 +1,3 @@
-/** 菜单管理页 **/
-
-// ==================
-// 第三方库
-// ==================
 import React, { useState, useCallback, useMemo } from "react";
 import { useSetState, useMount } from "react-use";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,16 +16,12 @@ import {
   Divider,
 } from "antd";
 import {
-  EyeOutlined,
   ToolOutlined,
   DeleteOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import { cloneDeep } from "lodash";
 
-// ==================
-// 组件
-// ==================
 import { IconsData } from "@/util/json";
 import Icon from "@/components/Icon";
 
@@ -48,9 +39,6 @@ const formItemLayout = {
   },
 };
 
-// ==================
-// 类型声明
-// ==================
 import {
   TableRecordData,
   Menu,
@@ -62,14 +50,8 @@ import {
 import { RootState, Dispatch } from "@/store";
 import type { EventDataNode, DataNode } from "rc-tree/lib/interface";
 
-// ==================
-// CSS
-// ==================
-import "./index.less";
+import "./index.css";
 
-// ==================
-// 本组件
-// ==================
 function MenuAdminContainer() {
   const p = useSelector((state: RootState) => state.app.powersCode);
   const dispatch = useDispatch<Dispatch>();
@@ -90,12 +72,10 @@ function MenuAdminContainer() {
     {}
   );
 
-  // 生命周期 - 首次加载组件时触发
   useMount(() => {
     getData();
   });
 
-  // 获取本页面所需数据
   const getData = async () => {
     if (!p.includes("menu:query")) {
       return;
@@ -111,7 +91,6 @@ function MenuAdminContainer() {
     }
   };
 
-  /** 工具 - 递归将扁平数据转换为层级数据 **/
   const dataToJson = useCallback(
     (one: TreeSourceData | null, data: TreeSourceData[]) => {
       let kids: TreeSourceData[];
@@ -129,7 +108,6 @@ function MenuAdminContainer() {
     []
   );
 
-  // 工具 - 赋值Key
   const makeKey = useCallback((data: Menu[]) => {
     const newData: TreeSourceData[] = [];
     for (let i = 0; i < data.length; i++) {
@@ -146,7 +124,6 @@ function MenuAdminContainer() {
     return newData;
   }, []);
 
-  /** 点击树目录时触发 **/
   const onTreeSelect = useCallback(
     (
       keys: React.Key[],
@@ -168,13 +145,11 @@ function MenuAdminContainer() {
     []
   );
 
-  /** 工具 - 根据parentID返回parentName **/
   const getNameByParentId = (id: number | null) => {
     const p = data.find((item) => item.id === id);
     return p ? p.title : undefined;
   };
 
-  /** 新增&修改 模态框出现 **/
   const onModalShow = (data: TableRecordData | null, type: operateType) => {
     setModal({
       modalShow: true,
@@ -200,14 +175,12 @@ function MenuAdminContainer() {
     });
   };
 
-  /** 新增&修改 模态框关闭 **/
   const onClose = () => {
     setModal({
       modalShow: false,
     });
   };
 
-  /** 新增&修改 提交 **/
   const onOk = async () => {
     if (modal.operateType === "see") {
       onClose();
@@ -267,7 +240,6 @@ function MenuAdminContainer() {
     }
   };
 
-  /** 删除一条数据 **/
   const onDel = async (record: TableRecordData) => {
     const params = { id: record.id };
     const res = await dispatch.sys.delMenu(params);
@@ -280,24 +252,16 @@ function MenuAdminContainer() {
     }
   };
 
-  // ==================
-  // 属性 和 memo
-  // ==================
-
-  /** 处理原始数据，将原始数据处理为层级关系 **/
   const sourceData = useMemo(() => {
     const menuData: Menu[] = cloneDeep(data);
-    // 这应该递归，把children数据也赋值key
     const d: TreeSourceData[] = makeKey(menuData);
 
-    // 按照sort排序
     d.sort((a, b) => {
       return a.sorts - b.sorts;
     });
     return dataToJson(null, d) || [];
   }, [data, dataToJson]);
 
-  /** 构建表格字段 **/
   const tableColumns = [
     {
       title: "序号",
@@ -387,7 +351,6 @@ function MenuAdminContainer() {
     },
   ];
 
-  /** 构建表格数据 **/
   const tableData = useMemo(() => {
     return data
       .filter((item: Menu) => item.parent === (Number(treeSelect.id) || null))

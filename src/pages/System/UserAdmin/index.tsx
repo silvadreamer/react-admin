@@ -1,8 +1,3 @@
-/** User 系统管理/用户管理 **/
-
-// ==================
-// 所需的第三方库
-// ==================
 import React, { useState, useMemo } from "react";
 import { useSetState, useMount } from "react-use";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,7 +14,6 @@ import {
   Select,
 } from "antd";
 import {
-  EyeOutlined,
   EditOutlined,
   ToolOutlined,
   DeleteOutlined,
@@ -27,10 +21,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 
-// ==================
-// 所需的自定义的东西
-// ==================
-import tools from "@/util/tools"; // 工具函数
+import tools from "@/util/tools";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -46,14 +37,8 @@ const formItemLayout = {
   },
 };
 
-// ==================
-// 所需的组件
-// ==================
 import RoleTree from "@/components/TreeChose/RoleTree";
 
-// ==================
-// 类型声明
-// ==================
 import {
   TableRecordData,
   Page,
@@ -72,28 +57,25 @@ function UserAdminContainer(): JSX.Element {
   const p = useSelector((state: RootState) => state.app.powersCode);
 
   const [form] = Form.useForm();
-  const [data, setData] = useState<TableRecordData[]>([]); // 当前页面列表数据
-  const [loading, setLoading] = useState(false); // 数据是否正在加载中
+  const [data, setData] = useState<TableRecordData[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // 分页相关参数
   const [page, setPage] = useSetState<Page>({
     pageNum: 1,
     pageSize: 10,
     total: 0,
   });
 
-  // 模态框相关参数
   const [modal, setModal] = useSetState<ModalType>({
-    operateType: "add", // see查看，add添加，up修改
+    operateType: "add",
     nowData: null,
     modalShow: false,
     modalLoading: false,
   });
 
-  // 搜索相关参数
   const [searchInfo, setSearchInfo] = useSetState<SearchInfo>({
-    username: undefined, // 用户名
-    conditions: undefined, // 状态
+    username: undefined,
+    conditions: undefined,
   });
 
   // 角色树相关参数
@@ -104,13 +86,11 @@ function UserAdminContainer(): JSX.Element {
     roleTreeDefault: [],
   });
 
-  // 生命周期 - 组件挂载时触发一次
   useMount(() => {
     onGetData(page);
     getAllRolesData();
   });
 
-  // 函数 - 获取所有的角色数据，用于分配角色控件的原始数据
   const getAllRolesData = async (): Promise<void> => {
     try {
       const res = await dispatch.sys.getAllRoles();
@@ -124,7 +104,6 @@ function UserAdminContainer(): JSX.Element {
     }
   };
 
-  // 函数 - 查询当前页面所需列表数据
   async function onGetData(page: {
     pageNum: number;
     pageSize: number;
@@ -157,7 +136,6 @@ function UserAdminContainer(): JSX.Element {
     }
   }
 
-  // 搜索 - 名称输入框值改变时触发
   const searchUsernameChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
@@ -166,21 +144,14 @@ function UserAdminContainer(): JSX.Element {
     }
   };
 
-  // 搜索 - 状态下拉框选择时触发
   const searchConditionsChange = (v: number): void => {
     setSearchInfo({ conditions: v });
   };
 
-  // 搜索
   const onSearch = (): void => {
     onGetData(page);
   };
 
-  /**
-   * 添加/修改/查看 模态框出现
-   * @param data 当前选中的那条数据
-   * @param type add添加/up修改/see查看
-   * **/
   const onModalShow = (
     data: TableRecordData | null,
     type: operateType
@@ -190,13 +161,10 @@ function UserAdminContainer(): JSX.Element {
       nowData: data,
       operateType: type,
     });
-    // 用setTimeout是因为首次让Modal出现时得等它挂载DOM，不然form对象还没来得及挂载到Form上
     setTimeout(() => {
       if (type === "add") {
-        // 新增，需重置表单各控件的值
         form.resetFields();
       } else if (data) {
-        // 查看或修改，需设置表单各控件的值为当前所选中行的数据
         form.setFieldsValue({
           ...data,
         });
@@ -204,7 +172,6 @@ function UserAdminContainer(): JSX.Element {
     });
   };
 
-  /** 模态框确定 **/
   const onOk = async (): Promise<void> => {
     if (modal.operateType === "see") {
       onClose();
@@ -224,7 +191,6 @@ function UserAdminContainer(): JSX.Element {
         conditions: values.conditions,
       };
       if (modal.operateType === "add") {
-        // 新增
         try {
           const res: Res | undefined = await dispatch.sys.addUser(params);
           if (res && res.status === 200) {
@@ -240,7 +206,6 @@ function UserAdminContainer(): JSX.Element {
           });
         }
       } else {
-        // 修改
         params.id = modal.nowData?.id;
         try {
           const res: Res | undefined = await dispatch.sys.upUser(params);
@@ -258,11 +223,9 @@ function UserAdminContainer(): JSX.Element {
         }
       }
     } catch {
-      // 未通过校验
     }
   };
 
-  // 删除某一条数据
   const onDel = async (id: number): Promise<void> => {
     setLoading(true);
     try {
@@ -278,14 +241,12 @@ function UserAdminContainer(): JSX.Element {
     }
   };
 
-  /** 模态框关闭 **/
   const onClose = () => {
     setModal({
       modalShow: false,
     });
   };
 
-  /** 分配角色按钮点击，角色控件出现 **/
   const onTreeShowClick = (record: TableRecordData): void => {
     setModal({
       nowData: record,
@@ -296,7 +257,6 @@ function UserAdminContainer(): JSX.Element {
     });
   };
 
-  // 分配角色确定
   const onRoleOk = async (keys: string[]): Promise<void> => {
     if (!modal.nowData?.id) {
       message.error("未获取到该条数据id");
@@ -325,23 +285,16 @@ function UserAdminContainer(): JSX.Element {
     }
   };
 
-  // 分配角色树关闭
   const onRoleClose = (): void => {
     setRole({
       roleTreeShow: false,
     });
   };
 
-  // 表格页码改变
   const onTablePageChange = (pageNum: number, pageSize: number): void => {
     onGetData({ pageNum, pageSize });
   };
 
-  // ==================
-  // 属性 和 memo
-  // ==================
-
-  // table字段
   const tableColumns = [
     {
       title: "序号",
@@ -354,19 +307,9 @@ function UserAdminContainer(): JSX.Element {
       key: "username",
     },
     {
-      title: "电话",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
       title: "邮箱",
       dataIndex: "email",
       key: "email",
-    },
-    {
-      title: "描述",
-      dataIndex: "desc",
-      key: "desc",
     },
     {
       title: "状态",
@@ -374,9 +317,9 @@ function UserAdminContainer(): JSX.Element {
       key: "conditions",
       render: (v: number): JSX.Element =>
         v === 1 ? (
-          <span style={{ color: "green" }}>启用</span>
+          <span style={{ color: "blue" }}>账号有效</span>
         ) : (
-          <span style={{ color: "red" }}>禁用</span>
+          <span style={{ color: "yellow" }}>账号禁用中</span>
         ),
     },
     {
@@ -386,18 +329,6 @@ function UserAdminContainer(): JSX.Element {
       render: (v: null, record: TableRecordData) => {
         const controls = [];
         const u = userinfo.userBasicInfo || { id: -1 };
-        p.includes("user:query") &&
-          controls.push(
-            <span
-              key="0"
-              className="control-btn green"
-              onClick={() => onModalShow(record, "see")}
-            >
-              <Tooltip placement="top" title="查看">
-                <EyeOutlined />
-              </Tooltip>
-            </span>
-          );
         p.includes("user:up") &&
           controls.push(
             <span
@@ -453,7 +384,6 @@ function UserAdminContainer(): JSX.Element {
     },
   ];
 
-  // table列表所需数据
   const tableData = useMemo(() => {
     return data.map((item, index) => {
       return {
@@ -505,7 +435,7 @@ function UserAdminContainer(): JSX.Element {
                 onChange={searchConditionsChange}
                 value={searchInfo.conditions}
               >
-                <Option value={1}>启用</Option>
+                <Option value={1}>有效</Option>
                 <Option value={-1}>禁用</Option>
               </Select>
             </li>
@@ -581,30 +511,6 @@ function UserAdminContainer(): JSX.Element {
             />
           </Form.Item>
           <Form.Item
-            label="电话"
-            name="phone"
-            {...formItemLayout}
-            rules={[
-              () => ({
-                validator: (rule, value) => {
-                  const v = value;
-                  if (v) {
-                    if (!tools.checkPhone(v)) {
-                      return Promise.reject("请输入有效的手机号码");
-                    }
-                  }
-                  return Promise.resolve();
-                },
-              }),
-            ]}
-          >
-            <Input
-              placeholder="请输入手机号"
-              maxLength={11}
-              disabled={modal.operateType === "see"}
-            />
-          </Form.Item>
-          <Form.Item
             label="邮箱"
             name="email"
             {...formItemLayout}
@@ -628,18 +534,6 @@ function UserAdminContainer(): JSX.Element {
             />
           </Form.Item>
           <Form.Item
-            label="描述"
-            name="desc"
-            {...formItemLayout}
-            rules={[{ max: 100, message: "最多输入100个字符" }]}
-          >
-            <TextArea
-              rows={4}
-              disabled={modal.operateType === "see"}
-              autoSize={{ minRows: 2, maxRows: 6 }}
-            />
-          </Form.Item>
-          <Form.Item
             label="状态"
             name="conditions"
             {...formItemLayout}
@@ -647,7 +541,7 @@ function UserAdminContainer(): JSX.Element {
           >
             <Select disabled={modal.operateType === "see"}>
               <Option key={1} value={1}>
-                启用
+                有效
               </Option>
               <Option key={-1} value={-1}>
                 禁用
