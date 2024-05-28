@@ -1,69 +1,47 @@
 const tools = {
   pointX(str: string | number, x = 0): string | number {
-    if (!str && str !== 0) {
+    if (str === undefined || str === null) {
       return str;
     }
-    const temp = Number(str);
-    if (temp === 0) {
-      return temp.toFixed(x);
+    const temp = parseFloat(str as string);
+    if (isNaN(temp)) {
+      return str;
     }
-    return temp ? temp.toFixed(x) : str;
+    return temp.toFixed(x);
   },
 
   trim(str: string): string {
-    const reg = /^\s*|\s*$/g;
-    return str.replace(reg, "");
+    return str.trim();
   },
 
   addMosaic(str: string): string {
     const s = String(str);
-    const lenth = s.length;
-    const howmuch = ((): number => {
-      if (s.length <= 2) {
-        return 0;
-      }
-      const l = s.length - 2;
-      if (l <= 6) {
-        return l;
-      }
-      return 6;
+    const length = s.length;
+    const howmuch = (() => {
+      const l = length - 2;
+      return l > 6 ? 6 : l;
     })();
-    const start = Math.floor((lenth - howmuch) / 2);
-    const ret = s.split("").map((v, i) => {
-      if (i >= start && i < start + howmuch) {
-        return "*";
-      }
-      return v;
-    });
-    return ret.join("");
+    const start = Math.floor((length - howmuch) / 2);
+    return s.split('').map((v, i) => (i >= start && i < start + howmuch ? '*' : v)).join('');
   },
 
   checkStr(str: string): boolean {
-    if (str === "") {
-      return true;
-    }
-    const rex = /^[_a-zA-Z0-9]+$/;
-    return rex.test(str);
+    return str === '' || /^[\w]+$/.test(str);
   },
 
   checkNumber(str: string): boolean {
-    if (!str) {
-      return true;
-    }
-    const rex = /^\d*$/;
-    return rex.test(str);
+    return str === '' || /^\d*$/.test(str);
   },
 
   checkPhone(str: string | number): boolean {
-    const rex = /^1[34578]\d{9}$/;
-    return rex.test(String(str));
+    return /^1[34578]\d{9}$/.test(String(str));
   },
 
   checkEmail(str: string): boolean {
-    const rex =
-      /^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*@[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*\.[a-z]{2,}$/;
+    const rex = /^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*@[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*\.[a-z]{2,}$/;
     return rex.test(str);
   },
+  
 
   compile(code: string): string {
     let c = String.fromCharCode(code.charCodeAt(0) + code.length);

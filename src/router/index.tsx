@@ -3,9 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { message } from "antd";
 import loadable from "@loadable/component";
-
 import tools from "@/util/tools";
-
 import { AuthNoLogin, AuthWithLogin, AuthNoPower } from "./AuthProvider";
 import Loading from "../components/Loading";
 import BasicLayout from "@/layouts/BasicLayout";
@@ -16,6 +14,7 @@ message.config({
 });
 
 import { RootState, Dispatch } from "@/store";
+
 
 
 const [
@@ -30,9 +29,9 @@ const [
 ] = [
   () => import("../pages/Login"),
   () => import("../pages/Home"),
-  () => import("../pages/System/MenuAdmin"),
-  () => import("../pages/System/RoleAdmin"),
-  () => import("../pages/System/UserAdmin"),
+  () => import("../pages/System/Menu"),
+  () => import("../pages/System/Role"),
+  () => import("../pages/System/User"),
   () => import("../pages/Item"),
   () => import("../pages/Order"),
   () => import("../pages/Marketing"),
@@ -80,8 +79,6 @@ function RouterCom(): JSX.Element {
         <Route path="goods" element={<Item />} />
         <Route path="order" element={<Order />} />
         <Route path="marketing" element={<Marketing />} />
-
-
         <Route
           path="system/menuadmin"
           element={

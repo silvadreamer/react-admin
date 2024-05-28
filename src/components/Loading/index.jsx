@@ -6,7 +6,7 @@ export default function LoadingComponent(){
   return (
     <div className="loading">
       <img src={ImgLoading} />
-      <div>加载中...</div>
+      <div>加载中~~~~</div>
     </div>
   );
 }

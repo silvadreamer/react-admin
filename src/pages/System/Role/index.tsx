@@ -396,7 +396,7 @@ function RoleAdminContainer() {
         <ul className="search-func">
           <li>
             <Button
-              type="primary"
+              type="dashed"
               icon={<PlusCircleOutlined />}
               disabled={!p.includes("role:add")}
               onClick={() => onModalShow(null, "add")}
@@ -429,7 +429,7 @@ function RoleAdminContainer() {
             </li>
             <li>
               <Button
-                type="primary"
+                type="dashed"
                 icon={<SearchOutlined />}
                 onClick={onSearch}
               >

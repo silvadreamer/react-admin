@@ -20,9 +20,7 @@ import {
   PlusCircleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-
 import tools from "@/util/tools";
-
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -78,7 +76,6 @@ function UserAdminContainer(): JSX.Element {
     conditions: undefined,
   });
 
-  // 角色树相关参数
   const [role, setRole] = useSetState<RoleTreeInfo>({
     roleData: [],
     roleTreeLoading: false,
@@ -100,7 +97,6 @@ function UserAdminContainer(): JSX.Element {
         });
       }
     } catch {
-      //
     }
   };
 
@@ -408,7 +404,7 @@ function UserAdminContainer(): JSX.Element {
         <ul className="search-func">
           <li>
             <Button
-              type="primary"
+              type="dashed"
               icon={<PlusCircleOutlined />}
               disabled={!p.includes("user:add")}
               onClick={() => onModalShow(null, "add")}
@@ -435,13 +431,13 @@ function UserAdminContainer(): JSX.Element {
                 onChange={searchConditionsChange}
                 value={searchInfo.conditions}
               >
-                <Option value={1}>有效</Option>
-                <Option value={-1}>禁用</Option>
+                <Option value={1}>账号有效</Option>
+                <Option value={-1}>账号禁用中</Option>
               </Select>
             </li>
             <li>
               <Button
-                type="primary"
+                type="dashed"
                 icon={<SearchOutlined />}
                 onClick={onSearch}
               >
@@ -467,7 +463,6 @@ function UserAdminContainer(): JSX.Element {
         />
       </div>
 
-      {/* 新增&修改&查看 模态框 */}
       <Modal
         title={{ add: "新增", up: "修改", see: "查看" }[modal.operateType]}
         visible={modal.modalShow}
