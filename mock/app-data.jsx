@@ -397,29 +397,10 @@ const onLogin = function (p) {
 
   return { status: 200, data: u, message: "登录成功" };
 };
-// const onLogin = async function (p) {
-//   const local_users = JSON.parse(localStorage.getItem("users")) || [];
-//   const u = local_users.find(function (item) {
-//     return item.username === p.username;
-//   });
-//   if (!u) {
-//     return { status: 204, data: null, message: "该用户不存在" };
-//   }
 
-//   const encryptedPassword = await encryptPassword(p.password);
-
-//   console.info(encryptedPassword, u.password);
-
-//   if (u.password !== encryptedPassword) {
-//     return { status: 204, data: null, message: "密码错误" };
-//   }
-
-//   return { status: 200, data: u, message: "登录成功" };
-// };
 
 // 获取所有菜单
 const getMenus = function (p) {
-  console.log(p);
   return {
     status: 200,
     data: JSON.parse(localStorage.getItem("menus")),
@@ -430,7 +411,6 @@ const getMenus = function (p) {
 // 获取菜单（根据ID）
 const getMenusById = function (p) {
   let res = [];
-  console.info(p);
   if (p.id instanceof Array) {
     const local_menus = JSON.parse(localStorage.getItem("menus"));
     res = local_menus.filter(function (item) {
@@ -725,7 +705,6 @@ const getAllMenusAndPowers = function (p) {
 // 给指定角色分配菜单和权限
 const setPowersByRoleId = function (p) {
   const local_roles = JSON.parse(localStorage.getItem("roles"));
-  console.info(local_roles);
   const oldIndex = local_roles.findIndex(function (item) {
     return item.id === p.id;
   });
@@ -878,7 +857,6 @@ export default function (obj) {
       ""
     );
   }
-  console.info("请求接口：", path, params);
   switch (path) {
     case "/api/login":
       return onLogin(params);

@@ -150,8 +150,7 @@ function LoginContainer() {
     try {
       const values = await registerForm.validateFields();
       const users = JSON.parse(localStorage.getItem("users") || "[]");
-      console.info(users);
-  
+
       const existingUser = users.find((user) => user.username === values.username);
       if (existingUser) {
         message.error("用户名已存在");

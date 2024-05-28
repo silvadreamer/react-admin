@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { useSetState, useMount } from "react-use";
+import { useMount } from "react-use";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Tree,
@@ -39,37 +39,24 @@ const formItemLayout = {
   },
 };
 
-import {
-  TableRecordData,
-  Menu,
-  ModalType,
-  operateType,
-  MenuParam,
-  TreeSourceData,
-} from "./index.type";
-import { RootState, Dispatch } from "@/store";
-import type { EventDataNode, DataNode } from "rc-tree/lib/interface";
-
 import "./index.css";
 
 function MenuAdminContainer() {
-  const p = useSelector((state: RootState) => state.app.powersCode);
-  const dispatch = useDispatch<Dispatch>();
+  const p = useSelector((state) => state.app.powersCode);
+  const dispatch = useDispatch();
 
   const [form] = Form.useForm();
-  const [data, setData] = useState<Menu[]>([]); 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [modal, setModal] = useSetState<ModalType>({
+  const [modal, setModal] = useState({
     operateType: "add",
     nowData: null,
     modalShow: false,
     modalLoading: false,
   });
 
-  const [treeSelect, setTreeSelect] = useState<{ title?: string; id?: number }>(
-    {}
-  );
+  const [treeSelect, setTreeSelect] = useState({ title: "", id: null });
 
   useMount(() => {
     getData();
@@ -90,32 +77,26 @@ function MenuAdminContainer() {
     }
   };
 
-  const dataToJson = useCallback(
-    (one: TreeSourceData | null, data: TreeSourceData[]) => {
-      let kids: TreeSourceData[];
-      if (!one) {
-        // 第1次递归
-        kids = data.filter((item: TreeSourceData) => !item.parent);
-      } else {
-        kids = data.filter((item: TreeSourceData) => item.parent === one.id);
-      }
-      kids.forEach(
-        (item: TreeSourceData) => (item.children = dataToJson(item, data))
-      );
-      return kids.length ? kids : undefined;
-    },
-    []
-  );
+  const dataToJson = useCallback((one, data) => {
+    let kids;
+    if (!one) {
+      kids = data.filter((item) => !item.parent);
+    } else {
+      kids = data.filter((item) => item.parent === one.id);
+    }
+    kids.forEach((item) => (item.children = dataToJson(item, data)));
+    return kids.length ? kids : undefined;
+  }, []);
 
-  const makeKey = useCallback((data: Menu[]) => {
-    const newData: TreeSourceData[] = [];
+  const makeKey = useCallback((data) => {
+    const newData = [];
     for (let i = 0; i < data.length; i++) {
-      const item: any = { ...data[i] };
+      const item = { ...data[i] };
       if (item.children) {
         item.children = makeKey(item.children);
       }
-      const treeItem: TreeSourceData = {
-        ...(item as TreeSourceData),
+      const treeItem = {
+        ...item,
         key: item.id,
       };
       newData.push(treeItem);
@@ -124,19 +105,9 @@ function MenuAdminContainer() {
   }, []);
 
   const onTreeSelect = useCallback(
-    (
-      keys: React.Key[],
-      info: {
-        event: "select";
-        selected: boolean;
-        node: EventDataNode<DataNode> & { id: number; title: string };
-        selectedNodes: DataNode[];
-        nativeEvent: MouseEvent;
-      }
-    ) => {
+    (keys, info) => {
       let treeSelect = {};
       if (info.selected) {
-        // 选中
         treeSelect = { title: info.node.title, id: info.node.id };
       }
       setTreeSelect(treeSelect);
@@ -144,12 +115,12 @@ function MenuAdminContainer() {
     []
   );
 
-  const getNameByParentId = (id: number | null) => {
+  const getNameByParentId = (id) => {
     const p = data.find((item) => item.id === id);
     return p ? p.title : undefined;
   };
 
-  const onModalShow = (data: TableRecordData | null, type: operateType) => {
+  const onModalShow = (data, type) => {
     setModal({
       modalShow: true,
       nowData: data,
@@ -188,7 +159,7 @@ function MenuAdminContainer() {
     try {
       const values = await form.validateFields();
 
-      const params: MenuParam = {
+      const params = {
         title: values.formTitle,
         url: values.formUrl,
         icon: values.formIcon,
@@ -197,9 +168,10 @@ function MenuAdminContainer() {
         desc: values.formDesc,
         conditions: values.formConditions,
       };
-      setModal({
+      setModal((prevState) => ({
+        ...prevState,
         modalLoading: true,
-      });
+      }));
       if (modal.operateType === "add") {
         try {
           const res = await dispatch.sys.addMenu(params);
@@ -212,9 +184,10 @@ function MenuAdminContainer() {
             message.error("添加失败");
           }
         } finally {
-          setModal({
+          setModal((prevState) => ({
+            ...prevState,
             modalLoading: false,
-          });
+          }));
         }
       } else {
         try {
@@ -229,9 +202,10 @@ function MenuAdminContainer() {
             message.error("修改失败");
           }
         } finally {
-          setModal({
+          setModal((prevState) => ({
+            ...prevState,
             modalLoading: false,
-          });
+          }));
         }
       }
     } catch {
@@ -239,7 +213,7 @@ function MenuAdminContainer() {
     }
   };
 
-  const onDel = async (record: TableRecordData) => {
+  const onDel = async (record) => {
     const params = { id: record.id };
     const res = await dispatch.sys.delMenu(params);
     if (res && res.status === 200) {
@@ -252,8 +226,8 @@ function MenuAdminContainer() {
   };
 
   const sourceData = useMemo(() => {
-    const menuData: Menu[] = cloneDeep(data);
-    const d: TreeSourceData[] = makeKey(menuData);
+    const menuData = cloneDeep(data);
+    const d = makeKey(menuData);
 
     d.sort((a, b) => {
       return a.sorts - b.sorts;
@@ -271,7 +245,7 @@ function MenuAdminContainer() {
       title: "图标",
       dataIndex: "icon",
       key: "icon",
-      render: (v: string | null) => {
+      render: (v) => {
         return v ? <Icon type={v} /> : "";
       },
     },
@@ -284,7 +258,7 @@ function MenuAdminContainer() {
       title: "路径",
       dataIndex: "url",
       key: "url",
-      render: (v: string | null) => {
+      render: (v) => {
         return v ? `/${v.replace(/^\//, "")}` : "";
       },
     },
@@ -297,7 +271,7 @@ function MenuAdminContainer() {
       title: "是否启用",
       dataIndex: "conditions",
       key: "conditions",
-      render: (v: number) =>
+      render: (v) =>
         v === 1 ? (
           <span style={{ color: "blue" }}>启用中</span>
         ) : (
@@ -308,7 +282,7 @@ function MenuAdminContainer() {
       title: "编辑操作",
       key: "control",
       width: 120,
-      render: (v: number, record: TableRecordData) => {
+      render: (v, record) => {
         const controls = [];
         p.includes("menu:up") &&
           controls.push(
@@ -338,7 +312,7 @@ function MenuAdminContainer() {
               </span>
             </Popconfirm>
           );
-        const result: JSX.Element[] = [];
+        const result = [];
         controls.forEach((item, index) => {
           if (index) {
             result.push(<Divider key={`line${index}`} type="vertical" />);
@@ -352,7 +326,7 @@ function MenuAdminContainer() {
 
   const tableData = useMemo(() => {
     return data
-      .filter((item: Menu) => item.parent === (Number(treeSelect.id) || null))
+      .filter((item) => item.parent === (Number(treeSelect.id) || null))
       .map((item, index) => {
         return {
           key: index,
@@ -443,13 +417,11 @@ function MenuAdminContainer() {
               dropdownClassName="iconSelect"
               disabled={modal.operateType === "see"}
             >
-              {IconsData.map((item, index) => {
-                return (
-                  <Option key={index} value={item}>
-                    <Icon type={item} />
-                  </Option>
-                );
-              })}
+              {IconsData.map((item, index) => (
+                <Option key={index} value={item}>
+                  <Icon type={item} />
+                </Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item

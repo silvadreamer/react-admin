@@ -13,10 +13,6 @@ message.config({
   duration: 2,
 });
 
-import { RootState, Dispatch } from "@/store";
-
-
-
 const [
   Login,
   Home,
@@ -36,21 +32,21 @@ const [
   () => import("../pages/Order"),
   () => import("../pages/Marketing"),
 ].map((item) => {
-  return loadable(item as any, {
+  return loadable(item, {
     fallback: <Loading />,
   });
 });
 
-function RouterCom(): JSX.Element {
-  const dispatch = useDispatch<Dispatch>();
-  const userinfo = useSelector((state: RootState) => state.app.userinfo);
+function RouterCom() {
+  const dispatch = useDispatch();
+  const userinfo = useSelector((state) => state.app.userinfo);
 
   useEffect(() => {
     const userTemp = sessionStorage.getItem("userinfo");
     if (userTemp && !userinfo.userBasicInfo) {
       dispatch.app.setUserInfo(JSON.parse(tools.uncompile(userTemp)));
     }
-  }, [dispatch.app, userinfo.userBasicInfo]);
+  }, [dispatch, userinfo.userBasicInfo]);
 
   return (
     <Routes>

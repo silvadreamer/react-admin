@@ -1,41 +1,26 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Tree, Modal } from "antd";
 import { cloneDeep } from "lodash";
-import { Role } from "@/models/index.type";
+import PropTypes from 'prop-types';
 
-type RoleLevel = Role & {
-  key: string | number;
-  parent?: RoleLevel;
-  children?: RoleLevel[];
-};
-
-interface Props {
-  title: string; 
-  data: Role[];
-  defaultKeys: number[]; 
-  visible: boolean; 
-  loading: boolean; 
-  onOk: (keys: string[], role: Role[]) => Promise<void>;
-  onClose: () => void; 
-}
-export default function RoleTreeComponent(props: Props): JSX.Element {
-  const [nowKeys, setNowKeys] = useState<string[]>([]);
+export default function RoleTreeComponent(props) {
+  const [nowKeys, setNowKeys] = useState([]);
 
   useEffect(() => {
     setNowKeys(props.defaultKeys.map((item) => `${item}`));
   }, [props.defaultKeys]);
 
   const dataToJson = useCallback(
-    (one: RoleLevel | undefined, data: RoleLevel[]) => {
+    (one, data) => {
       let kids;
       if (!one) {
         // 第1次递归
-        kids = data.filter((item: RoleLevel) => !item.parent);
+        kids = data.filter((item) => !item.parent);
       } else {
-        kids = data.filter((item: RoleLevel) => item.parent?.id === one.id);
+        kids = data.filter((item) => item.parent?.id === one.id);
       }
       kids.forEach(
-        (item: RoleLevel) => (item.children = dataToJson(item, data))
+        (item) => (item.children = dataToJson(item, data))
       );
       return kids.length ? kids : undefined;
     },
@@ -53,19 +38,19 @@ export default function RoleTreeComponent(props: Props): JSX.Element {
     props.onClose();
   }, [props]);
 
-  const onCheck = useCallback((keys: any) => {
+  const onCheck = useCallback((keys) => {
     setNowKeys(keys);
   }, []);
 
-  const makeKey = useCallback((data: Role[]) => {
-    const newData: RoleLevel[] = [];
+  const makeKey = useCallback((data) => {
+    const newData = [];
     for (let i = 0; i < data.length; i++) {
-      const item: any = { ...data[i] };
+      const item = { ...data[i] };
       if (item.children) {
         item.children = makeKey(item.children);
       }
-      const treeItem: RoleLevel = {
-        ...(item as RoleLevel),
+      const treeItem = {
+        ...item,
         key: item.id,
       };
       newData.push(treeItem);
@@ -74,9 +59,9 @@ export default function RoleTreeComponent(props: Props): JSX.Element {
   }, []);
 
   const sourceData = useMemo(() => {
-    const roleData: Role[] = cloneDeep(props.data);
+    const roleData = cloneDeep(props.data);
 
-    const d: RoleLevel[] = makeKey(roleData);
+    const d = makeKey(roleData);
 
     d.forEach((item) => {
       item.key = String(item.id);
@@ -103,3 +88,13 @@ export default function RoleTreeComponent(props: Props): JSX.Element {
     </Modal>
   );
 }
+
+RoleTreeComponent.propTypes = {
+  title: PropTypes.string,
+  data: PropTypes.array.isRequired,
+  defaultKeys: PropTypes.array.isRequired,
+  visible: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired,
+  onOk: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};

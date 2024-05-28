@@ -7,19 +7,13 @@ const { Sider } = Layout;
 
 import "./index.css";
 import Icon from "@/components/Icon";
-import type { Menu } from "@/models/index.type";
-import type { ItemType } from "antd/lib/menu/hooks/useItems";
+import PropTypes from 'prop-types';
 
-interface Props {
-  data: Menu[];
-  collapsed: boolean;
-}
-
-export default function MenuCom(props: Props): JSX.Element {
+export default function MenuCom(props) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [chosedKey, setChosedKey] = useState<string[]>([]);
-  const [openKeys, setOpenKeys] = useState<string[]>([]); 
+  const [chosedKey, setChosedKey] = useState([]);
+  const [openKeys, setOpenKeys] = useState([]); 
 
   useEffect(() => {
     const paths = location.pathname.split("/").filter((item) => !!item);
@@ -27,28 +21,28 @@ export default function MenuCom(props: Props): JSX.Element {
     setOpenKeys(paths.map((item) => `/${item}`));
   }, [location]);
 
-  const onSelect = (e: any) => {
+  const onSelect = (e) => {
     if (e?.key) {
       navigate(e.key);
     }
   };
 
   const dataToJson = useCallback(
-    (one: Menu | undefined, data: Menu[]): Menu[] | undefined => {
+    (one, data) => {
       let kids;
       if (!one) {
-        kids = data.filter((item: Menu) => !item.parent);
+        kids = data.filter((item) => !item.parent);
       } else {
-        kids = data.filter((item: Menu) => item.parent === one.id);
+        kids = data.filter((item) => item.parent === one.id);
       }
-      kids.forEach((item: Menu) => (item.children = dataToJson(item, data)));
+      kids.forEach((item) => (item.children = dataToJson(item, data)));
       return kids.length ? kids : undefined;
     },
     []
   );
 
-  const makeTreeDom = useCallback((data: Menu[]): any => {
-    return data.map((item: Menu) => {
+  const makeTreeDom = useCallback((data) => {
+    return data.map((item) => {
       if (item.children) {
         return {
           key: item.url,
@@ -77,12 +71,12 @@ export default function MenuCom(props: Props): JSX.Element {
     });
   }, []);
 
-  const treeDom: ItemType[] = useMemo(() => {
-    const d: Menu[] = cloneDeep(props.data);
+  const treeDom = useMemo(() => {
+    const d = cloneDeep(props.data);
     d.sort((a, b) => {
       return a.sorts - b.sorts;
     });
-    const sourceData: Menu[] = dataToJson(undefined, d) || [];
+    const sourceData = dataToJson(undefined, d) || [];
     const treeDom = makeTreeDom(sourceData);
     return treeDom;
   }, [props.data, dataToJson, makeTreeDom]);
@@ -106,9 +100,14 @@ export default function MenuCom(props: Props): JSX.Element {
         items={treeDom}
         selectedKeys={chosedKey}
         {...(props.collapsed ? {} : { openKeys })}
-        onOpenChange={(keys: string[]) => setOpenKeys(keys)}
+        onOpenChange={(keys) => setOpenKeys(keys)}
         onSelect={onSelect}
       />
     </Sider>
   );
 }
+
+MenuCom.propTypes = {
+  data: PropTypes.array.isRequired,
+  collapsed: PropTypes.bool.isRequired,
+};

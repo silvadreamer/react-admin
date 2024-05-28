@@ -1,47 +1,31 @@
 import axios from "@/util/axios";
 import qs from "qs";
 import { message } from "antd";
-import { Dispatch } from "@/store";
 
-import {
-  Menu,
-  Role,
-  MenuParam,
-  PowerParam,
-  PowerTree,
-  RoleParam,
-  SysState,
-  Res,
-  UserBasicInfoParam,
-} from "./index.type";
-
-const defaultState: SysState = {
-  menus: [], 
-  roles: [], 
-  powerTreeData: [], 
+const defaultState = {
+  menus: [],
+  roles: [],
+  powerTreeData: [],
 };
-
-
 
 export default {
   state: defaultState,
   reducers: {
-    reducerSetMenus(state: SysState, payload: Menu[]): SysState {
-      console.info("payload", payload);
+    reducerSetMenus(state, payload) {
       return { ...state, menus: payload };
     },
-    reducerSetRoles(state: SysState, payload: Role[]): SysState {
+    reducerSetRoles(state, payload) {
       return { ...state, roles: payload };
     },
-    reducerSetAllPowers(state: SysState, payload: PowerTree[]): SysState {
+    reducerSetAllPowers(state, payload) {
       return { ...state, powerTreeData: payload };
     },
   },
 
-  effects: (dispatch: Dispatch) => ({
-    async getMenus(): Promise<Res> {
+  effects: (dispatch) => ({
+    async getMenus() {
       try {
-        const res: Res = await axios.get("/api/getmenus");
+        const res = await axios.get("/api/getmenus");
         if (res && res.status === 200) {
           dispatch.sys.reducerSetMenus(res.data);
         }
@@ -52,10 +36,9 @@ export default {
       return;
     },
 
-    async getMenusById(params: { id: number | number[] }) {
+    async getMenusById(params) {
       try {
-        console.info("params", params);
-        const res: Res = await axios.post(`/api/getMenusById`, params);
+        const res = await axios.post(`/api/getMenusById`, params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -63,9 +46,9 @@ export default {
       return;
     },
 
-    async addMenu(params: MenuParam) {
+    async addMenu(params) {
       try {
-        const res: Res = await axios.post("/api/addmenu", params);
+        const res = await axios.post("/api/addmenu", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -73,9 +56,9 @@ export default {
       return;
     },
 
-    async upMenu(params: MenuParam) {
+    async upMenu(params) {
       try {
-        const res: Res = await axios.post("/api/upmenu", params);
+        const res = await axios.post("/api/upmenu", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -83,9 +66,9 @@ export default {
       return;
     },
 
-    async delMenu(params: { id: number }) {
+    async delMenu(params) {
       try {
-        const res: Res = await axios.post("/api/delmenu", params);
+        const res = await axios.post("/api/delmenu", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -93,10 +76,9 @@ export default {
       return;
     },
 
-
-    async getPowerDataByMenuId(params: { menuId: number | null }) {
+    async getPowerDataByMenuId(params) {
       try {
-        const res: Res = await axios.get(
+        const res = await axios.get(
           `/api/getpowerbymenuid?${qs.stringify(params)}`
         );
         return res;
@@ -106,9 +88,9 @@ export default {
       return;
     },
 
-    async getPowerById(params: { id: number | number[] }) {
+    async getPowerById(params) {
       try {
-        const res: Res = await axios.post(`/api/getPowerById`, params);
+        const res = await axios.post(`/api/getPowerById`, params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -116,9 +98,9 @@ export default {
       return;
     },
 
-    async getAllRoles(): Promise<Res> {
+    async getAllRoles() {
       try {
-        const res: Res = await axios.get("/api/getAllRoles");
+        const res = await axios.get("/api/getAllRoles");
         if (res && res.status === 200) {
           dispatch.sys.reducerSetRoles(res.data);
         }
@@ -129,9 +111,9 @@ export default {
       return;
     },
 
-    async addPower(params: PowerParam) {
+    async addPower(params) {
       try {
-        const res: Res = await axios.post("/api/addpower", params);
+        const res = await axios.post("/api/addpower", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -139,9 +121,9 @@ export default {
       return;
     },
 
-    async upPower(params: PowerParam) {
+    async upPower(params) {
       try {
-        const res: Res = await axios.post("/api/uppower", params);
+        const res = await axios.post("/api/uppower", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -149,9 +131,9 @@ export default {
       return;
     },
 
-    async delPower(params: { id: number }) {
+    async delPower(params) {
       try {
-        const res: Res = await axios.post("/api/delpower", params);
+        const res = await axios.post("/api/delpower", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -159,14 +141,9 @@ export default {
       return;
     },
 
-    async getRoles(params: {
-      pageNum: number;
-      pageSize: number;
-      title?: string;
-      conditions?: number;
-    }) {
+    async getRoles(params) {
       try {
-        const res: Res = await axios.get(
+        const res = await axios.get(
           `/api/getroles?${qs.stringify(params)}`
         );
         return res;
@@ -176,9 +153,9 @@ export default {
       return;
     },
 
-    async getRoleById(params: { id: number | number[] }) {
+    async getRoleById(params) {
       try {
-        const res: Res = await axios.post(`/api/getRoleById`, params);
+        const res = await axios.post(`/api/getRoleById`, params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -186,9 +163,9 @@ export default {
       return;
     },
 
-    async addRole(params: RoleParam) {
+    async addRole(params) {
       try {
-        const res: Res = await axios.post("/api/addrole", params);
+        const res = await axios.post("/api/addrole", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -196,9 +173,9 @@ export default {
       return;
     },
 
-    async upRole(params: RoleParam) {
+    async upRole(params) {
       try {
-        const res: Res = await axios.post("/api/uprole", params);
+        const res = await axios.post("/api/uprole", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -206,9 +183,9 @@ export default {
       return;
     },
 
-    async delRole(params: { id: number }) {
+    async delRole(params) {
       try {
-        const res: Res = await axios.post("/api/delrole", params);
+        const res = await axios.post("/api/delrole", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -216,9 +193,9 @@ export default {
       return;
     },
 
-    async findAllPowerByRoleId(params: { id: number }) {
+    async findAllPowerByRoleId(params) {
       try {
-        const res: Res = await axios.get(
+        const res = await axios.get(
           `/api/findAllPowerByRoleId?${qs.stringify(params)}`
         );
         return res;
@@ -228,9 +205,9 @@ export default {
       return;
     },
 
-    async getAllMenusAndPowers(): Promise<Res> {
+    async getAllMenusAndPowers() {
       try {
-        const res: Res = await axios.get(`/api/getAllMenusAndPowers`);
+        const res = await axios.get(`/api/getAllMenusAndPowers`);
         if (res && res.status === 200) {
           dispatch.sys.reducerSetAllPowers(res.data);
         }
@@ -241,13 +218,9 @@ export default {
       return;
     },
 
-    async setPowersByRoleId(params: {
-      id: number;
-      menus: number[];
-      powers: number[];
-    }) {
+    async setPowersByRoleId(params) {
       try {
-        const res: Res = await axios.post("/api/setPowersByRoleId", params);
+        const res = await axios.post("/api/setPowersByRoleId", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -255,15 +228,9 @@ export default {
       return;
     },
 
-    async setPowersByRoleIds(
-      params: {
-        id: number;
-        menus: number[];
-        powers: number[];
-      }[]
-    ) {
+    async setPowersByRoleIds(params) {
       try {
-        const res: Res = await axios.post("/api/setPowersByRoleIds", params);
+        const res = await axios.post("/api/setPowersByRoleIds", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -271,14 +238,9 @@ export default {
       return;
     },
 
-    async getUserList(params: {
-      pageNum: number;
-      pageSize: number;
-      username?: string;
-      conditions?: number;
-    }) {
+    async getUserList(params) {
       try {
-        const res: Res = await axios.get(
+        const res = await axios.get(
           `/api/getUserList?${qs.stringify(params)}`
         );
         return res;
@@ -288,9 +250,9 @@ export default {
       return;
     },
 
-    async addUser(params: UserBasicInfoParam) {
+    async addUser(params) {
       try {
-        const res: Res = await axios.post("/api/addUser", params);
+        const res = await axios.post("/api/addUser", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -298,9 +260,9 @@ export default {
       return;
     },
 
-    async upUser(params: UserBasicInfoParam) {
+    async upUser(params) {
       try {
-        const res: Res = await axios.post("/api/upUser", params);
+        const res = await axios.post("/api/upUser", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -308,9 +270,9 @@ export default {
       return;
     },
 
-    async delUser(params: { id: number }) {
+    async delUser(params) {
       try {
-        const res: Res = await axios.post("/api/delUser", params);
+        const res = await axios.post("/api/delUser", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -318,9 +280,9 @@ export default {
       return;
     },
 
-    async setUserRoles(params: { id: number; roles: number[] }) {
+    async setUserRoles(params) {
       try {
-        const res: Res = await axios.post("/api/upUser", params);
+        const res = await axios.post("/api/upUser", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");

@@ -1,4 +1,4 @@
-export const IconsData: string[] = [
+export const IconsData = [
   "icon-Dollar",
   "icon-compass",
   "icon-EURO",

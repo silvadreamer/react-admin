@@ -9,7 +9,7 @@ import "normalize.css";
 import "@/assets/styles/default.less";
 import "@/assets/styles/global.less";
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <HashRouter>

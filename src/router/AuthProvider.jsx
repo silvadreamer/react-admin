@@ -1,41 +1,33 @@
 import React, { useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "@/store";
-
-import type { Menu } from "@/models/index.type";
-
 import tools from "@/util/tools";
 
-interface Props {
-  children: JSX.Element;
-}
-
-export function AuthNoLogin(props: Props) {
-  const userinfo = useSelector((state: RootState) => state.app.userinfo);
+const AuthNoLogin = (props) => {
+  const userinfo = useSelector((state) => state.app.userinfo);
 
   if (!userinfo.userBasicInfo) {
     return <Navigate to="/user/login" replace />;
   }
 
   return props.children;
-}
+};
 
-export function AuthWithLogin(props: Props) {
-  const userinfo = useSelector((state: RootState) => state.app.userinfo);
+const AuthWithLogin = (props) => {
+  const userinfo = useSelector((state) => state.app.userinfo);
 
   if (userinfo.userBasicInfo) {
     return <Navigate to="/home" replace />;
   }
   return props.children;
-}
+};
 
-export function AuthNoPower(props: Props) {
+const AuthNoPower = (props) => {
   const location = useLocation();
-  const userinfo = useSelector((state: RootState) => state.app.userinfo);
+  const userinfo = useSelector((state) => state.app.userinfo);
 
   const isHavePower = useMemo(() => {
-    let menus: Menu[] = [];
+    let menus = [];
     if (userinfo.menus && userinfo.menus.length) {
       menus = userinfo.menus;
     } else if (sessionStorage.getItem("userinfo")) {
@@ -43,12 +35,9 @@ export function AuthNoPower(props: Props) {
         tools.uncompile(sessionStorage.getItem("userinfo") || "[]")
       ).menus;
     }
-    const m: string[] = menus.map((item) => item.url);
+    const m = menus.map((item) => item.url);
 
-    if (m.includes(location.pathname)) {
-      return true;
-    }
-    return false;
+    return m.includes(location.pathname);
   }, [userinfo, location.pathname]);
 
   console.log("auth:", userinfo, isHavePower, location.pathname);
@@ -58,4 +47,6 @@ export function AuthNoPower(props: Props) {
   }
 
   return props.children;
-}
+};
+
+export { AuthNoLogin, AuthWithLogin, AuthNoPower };

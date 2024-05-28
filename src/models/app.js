@@ -1,36 +1,27 @@
-import axios from "@/util/axios"; 
+import axios from "@/util/axios";
 import { message } from "antd";
-import { Dispatch, RootState } from "@/store";
-import {
-  Menu,
-  Role,
-  Power,
-  MenuAndPower,
-  UserInfo,
-  AppState,
-  Res,
-} from "./index.type";
 
-const defaultState: AppState = {
+const defaultState = {
   userinfo: {
-    roles: [], 
-    menus: [], 
+    roles: [],
+    menus: [],
     powers: [],
-    userBasicInfo: null, 
+    userBasicInfo: null,
   },
-  powersCode: [], 
+  powersCode: [],
 };
+
 export default {
   state: defaultState,
   reducers: {
-    reducerUserInfo(state: AppState, payload: UserInfo) {
+    reducerUserInfo(state, payload) {
       return {
         ...state,
         userinfo: payload,
         powersCode: payload.powers.map((item) => item.code),
       };
     },
-    reducerLogout(state: AppState) {
+    reducerLogout(state) {
       return {
         ...state,
         userinfo: {
@@ -42,10 +33,10 @@ export default {
     },
   },
 
-  effects: (dispatch: Dispatch) => ({
-    async onLogin(params: { username: string; password: string }) {
+  effects: (dispatch) => ({
+    async onLogin(params) {
       try {
-        const res: Res = await axios.post("/api/login", params);
+        const res = await axios.post("/api/login", params);
         return res;
       } catch (err) {
         message.error("网络错误，请重试");
@@ -64,52 +55,44 @@ export default {
       return;
     },
 
-    async setUserInfo(params: UserInfo) {
+    async setUserInfo(params) {
       dispatch.app.reducerUserInfo(params);
       return "success";
     },
 
-    async updateUserInfo(payload: null, rootState: RootState): Promise<any> {
-      const userinfo: UserInfo = rootState.app.userinfo;
+    async updateUserInfo(payload, rootState) {
+      const userinfo = rootState.app.userinfo;
 
-      const res2: Res | undefined = await dispatch.sys.getRoleById({
+      const res2 = await dispatch.sys.getRoleById({
         id: userinfo.roles.map((item) => item.id),
       });
       if (!res2 || res2.status !== 200) {
         return res2;
       }
 
-      const roles: Role[] = res2.data.filter(
-        (item: Role) => item.conditions === 1
-      );
+      const roles = res2.data.filter((item) => item.conditions === 1);
 
       const menuAndPowers = roles.reduce(
         (a, b) => [...a, ...b.menuAndPowers],
-        [] as MenuAndPower[]
+        []
       );
-      const res3: Res | undefined = await dispatch.sys.getMenusById({
+      const res3 = await dispatch.sys.getMenusById({
         id: Array.from(new Set(menuAndPowers.map((item) => item.menuId))),
       });
       if (!res3 || res3.status !== 200) {
         return res3;
       }
-      const menus: Menu[] = res3.data.filter(
-        (item: Menu) => item.conditions === 1
-      );
+      const menus = res3.data.filter((item) => item.conditions === 1);
 
-      const res4: Res | undefined = await dispatch.sys.getPowerById({
+      const res4 = await dispatch.sys.getPowerById({
         id: Array.from(
-          new Set(
-            menuAndPowers.reduce((a, b) => [...a, ...b.powers], [] as number[])
-          )
+          new Set(menuAndPowers.reduce((a, b) => [...a, ...b.powers], []))
         ),
       });
       if (!res4 || res4.status !== 200) {
         return res4;
       }
-      const powers: Power[] = res4.data.filter(
-        (item: Power) => item.conditions === 1
-      );
+      const powers = res4.data.filter((item) => item.conditions === 1);
       this.setUserInfo({
         ...userinfo,
         roles,

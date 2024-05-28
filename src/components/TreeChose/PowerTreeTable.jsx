@@ -1,63 +1,45 @@
-
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Modal, Table, Checkbox, Spin } from "antd";
-import { Power, PowerTree } from "@/models/index.type";
 import { cloneDeep } from "lodash";
 
-export type PowerTreeDefault = {
-  menus: number[];
-  powers: number[];
-};
-
-export type PowerLevel = PowerTree & {
-  parent?: PowerLevel;
-  children?: PowerLevel[];
-  key?: number;
-};
-
-interface Props {
-  title: string; 
-  data: PowerTree[]; 
-  defaultChecked: PowerTreeDefault;
-  modalShow: boolean;
-  initloading?: boolean;
-  loading: boolean;
-  onClose: () => void;
-  onOk: (res: PowerTreeDefault) => void;
-}
-
-
-export default function TreeTable(props: Props): JSX.Element {
-  const [treeChecked, setTreeChecked] = useState<number[]>([]); 
-  const [btnDtoChecked, setBtnDtoChecked] = useState<number[]>([]); 
+const TreeTable = ({
+  title,
+  data,
+  defaultChecked,
+  modalShow,
+  initloading,
+  loading,
+  onClose,
+  onOk,
+}) => {
+  const [treeChecked, setTreeChecked] = useState([]);
+  const [btnDtoChecked, setBtnDtoChecked] = useState([]);
 
   useEffect(() => {
-    setTreeChecked(props.defaultChecked.menus || []);
-    setBtnDtoChecked(props.defaultChecked.powers || []);
-  }, [props.defaultChecked]);
+    setTreeChecked(defaultChecked.menus || []);
+    setBtnDtoChecked(defaultChecked.powers || []);
+  }, [defaultChecked]);
 
-  const onOk = useCallback(() => {
-    props.onOk?.({
+  const handleOk = useCallback(() => {
+    onOk({
       menus: treeChecked,
       powers: btnDtoChecked,
     });
-  }, [props, btnDtoChecked, treeChecked]);
+  }, [onOk, btnDtoChecked, treeChecked]);
 
-
-  const onClose = useCallback(() => {
-    props.onClose();
-  }, [props]);
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
 
   const dtoIsChecked = useCallback(
-    (id: number): boolean => {
+    (id) => {
       return !!btnDtoChecked.find((item) => item === id);
     },
     [btnDtoChecked]
   );
 
   const onBtnDtoChange = useCallback(
-    (e: any, id: number, record: PowerLevel) => {
-      console.log("哈？", record);
+    (e, id, record) => {
       const old = [...btnDtoChecked];
       let treeCheckedTemp = [...treeChecked];
       if (e.target.checked) {
@@ -66,7 +48,7 @@ export default function TreeTable(props: Props): JSX.Element {
       } else {
         old.splice(old.indexOf(id), 1);
 
-        const tempMap = record.powers.map((item: Power) => item.id);
+        const tempMap = record.powers.map((item) => item.id);
         if (
           !btnDtoChecked.some(
             (item) => item !== id && tempMap.indexOf(item) >= 0
@@ -82,31 +64,28 @@ export default function TreeTable(props: Props): JSX.Element {
     [btnDtoChecked, treeChecked]
   );
 
-  const dataToJson = useCallback(
-    (one: PowerLevel | undefined, data: PowerLevel[]) => {
-      let kids;
-      if (!one) {
-        kids = data.filter((item: PowerLevel) => !item.parent);
-      } else {
-        kids = data.filter((item: PowerLevel) => item.parent === one.id);
-      }
-      kids.forEach((item: PowerLevel) => {
-        item.children = dataToJson(item, data);
-        item.key = item.id;
-      });
-      return kids.length ? kids : undefined;
-    },
-    []
-  );
+  const dataToJson = useCallback((one, data) => {
+    let kids;
+    if (!one) {
+      kids = data.filter((item) => !item.parent);
+    } else {
+      kids = data.filter((item) => item.parent === one.id);
+    }
+    kids.forEach((item) => {
+      item.children = dataToJson(item, data);
+      item.key = item.id;
+    });
+    return kids.length ? kids : undefined;
+  }, []);
 
-  const makeKey = useCallback((data: PowerTree[]) => {
-    const newData: PowerLevel[] = [];
+  const makeKey = useCallback((data) => {
+    const newData = [];
     for (let i = 0; i < data.length; i++) {
-      const item: any = { ...data[i] };
+      const item = { ...data[i] };
       if (item.children) {
         item.children = makeKey(item.children);
       }
-      const treeItem: PowerLevel = {
+      const treeItem = {
         ...item,
         key: item.id,
       };
@@ -116,26 +95,22 @@ export default function TreeTable(props: Props): JSX.Element {
   }, []);
 
   const sourceData = useMemo(() => {
-    const powerData: PowerTree[] = cloneDeep(props.data);
-    const d: PowerLevel[] = makeKey(powerData);
+    const powerData = cloneDeep(data);
+    const d = makeKey(powerData);
     d.sort((a, b) => {
       return a.sorts - b.sorts;
     });
 
     return dataToJson(undefined, d) || [];
-  }, [props.data, dataToJson]);
-
-  type TableData = {
-    id: number;
-  };
+  }, [data, dataToJson, makeKey]);
 
   const tableRowSelection = useMemo(() => {
     return {
-      onChange: (selectedRowKeys: React.Key[]): void => {
+      onChange: (selectedRowKeys) => {
         setTreeChecked(selectedRowKeys.map((item) => Number(item)));
       },
-      onSelect: (record: TableData, selected: boolean): void => {
-        const t = props.data.find((item) => item.id === record.id);
+      onSelect: (record, selected) => {
+        const t = data.find((item) => item.id === record.id);
         if (selected) {
           if (t && Array.isArray(t.powers)) {
             const temp = Array.from(
@@ -153,12 +128,12 @@ export default function TreeTable(props: Props): JSX.Element {
           }
         }
       },
-      onSelectAll: (selected: boolean) => {
+      onSelectAll: (selected) => {
         if (selected) {
           setBtnDtoChecked(
-            props.data.reduce((v1, v2) => {
+            data.reduce((v1, v2) => {
               return [...v1, ...v2.powers.map((k) => k.id)];
-            }, [] as number[])
+            }, [])
           );
         } else {
           setBtnDtoChecked([]);
@@ -166,7 +141,7 @@ export default function TreeTable(props: Props): JSX.Element {
       },
       selectedRowKeys: treeChecked,
     };
-  }, [props.data, treeChecked, btnDtoChecked]);
+  }, [data, treeChecked, btnDtoChecked]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -181,14 +156,14 @@ export default function TreeTable(props: Props): JSX.Element {
         dataIndex: "powers",
         key: "powers",
         width: "70%",
-        render: (value: Power[], record: PowerLevel): JSX.Element[] | null => {
+        render: (value, record) => {
           if (value) {
-            return value.map((item: Power, index: number) => {
+            return value.map((item, index) => {
               return (
                 <Checkbox
                   key={index}
                   checked={dtoIsChecked(item.id)}
-                  onChange={(e): void => onBtnDtoChange(e, item.id, record)}
+                  onChange={(e) => onBtnDtoChange(e, item.id, record)}
                 >
                   {item.title}
                 </Checkbox>
@@ -206,13 +181,13 @@ export default function TreeTable(props: Props): JSX.Element {
       className="menu-tree-table"
       zIndex={1001}
       width={750}
-      title={props.title || "请选择"}
-      open={props.modalShow}
-      onOk={onOk}
-      onCancel={onClose}
-      confirmLoading={props.loading}
+      title={title || "请选择"}
+      open={modalShow}
+      onOk={handleOk}
+      onCancel={handleClose}
+      confirmLoading={loading}
     >
-      {props.initloading ? (
+      {initloading ? (
         <div style={{ textAlign: "center" }}>
           <Spin tip="加载中…" />
         </div>
@@ -227,4 +202,6 @@ export default function TreeTable(props: Props): JSX.Element {
       )}
     </Modal>
   );
-}
+};
+
+export default TreeTable;

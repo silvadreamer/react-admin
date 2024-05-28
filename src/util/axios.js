@@ -1,18 +1,18 @@
-import { baseUrl } from "../config";
+import { baseUrl } from "../config/index.js";
 import axios from "axios";
 
 import Mock from "mockjs";
-// @ts-ignore
 import mock from "../../mock/app-data.jsx";
-Mock.mock(/\/api.*/, (options: any) => {
+
+Mock.mock(/\/api.*/, (options) => {
   const res = mock(options);
   return res;
 });
 
 axios.defaults.baseURL = baseUrl;
 axios.defaults.withCredentials = false;
-axios.interceptors.response.use((response) => {
 
+axios.interceptors.response.use((response) => {
   return response.data;
 });
 

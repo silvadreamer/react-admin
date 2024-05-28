@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { useSetState, useMount } from "react-use";
+import { useMount } from "react-use";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Form,
@@ -37,46 +37,34 @@ const formItemLayout = {
 
 import RoleTree from "@/components/TreeChose/RoleTree";
 
-import {
-  TableRecordData,
-  Page,
-  operateType,
-  ModalType,
-  SearchInfo,
-  RoleTreeInfo,
-  UserBasicInfoParam,
-  Res,
-} from "./index.type";
-import { RootState, Dispatch } from "@/store";
-
-function UserAdminContainer(): JSX.Element {
-  const dispatch = useDispatch<Dispatch>();
-  const userinfo = useSelector((state: RootState) => state.app.userinfo);
-  const p = useSelector((state: RootState) => state.app.powersCode);
+function UserAdminContainer() {
+  const dispatch = useDispatch();
+  const userinfo = useSelector((state) => state.app.userinfo);
+  const p = useSelector((state) => state.app.powersCode);
 
   const [form] = Form.useForm();
-  const [data, setData] = useState<TableRecordData[]>([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [page, setPage] = useSetState<Page>({
+  const [page, setPage] = useState({
     pageNum: 1,
     pageSize: 10,
     total: 0,
   });
 
-  const [modal, setModal] = useSetState<ModalType>({
+  const [modal, setModal] = useState({
     operateType: "add",
     nowData: null,
     modalShow: false,
     modalLoading: false,
   });
 
-  const [searchInfo, setSearchInfo] = useSetState<SearchInfo>({
+  const [searchInfo, setSearchInfo] = useState({
     username: undefined,
     conditions: undefined,
   });
 
-  const [role, setRole] = useSetState<RoleTreeInfo>({
+  const [role, setRole] = useState({
     roleData: [],
     roleTreeLoading: false,
     roleTreeShow: false,
@@ -88,29 +76,28 @@ function UserAdminContainer(): JSX.Element {
     getAllRolesData();
   });
 
-  const getAllRolesData = async (): Promise<void> => {
+  const getAllRolesData = async () => {
     try {
       const res = await dispatch.sys.getAllRoles();
       if (res && res.status === 200) {
-        setRole({
+        setRole((prevState) => ({
+          ...prevState,
           roleData: res.data,
-        });
+        }));
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  async function onGetData(page: {
-    pageNum: number;
-    pageSize: number;
-  }): Promise<void> {
+  async function onGetData({ pageNum, pageSize }) {
     if (!p.includes("user:query")) {
       return;
     }
 
     const params = {
-      pageNum: page.pageNum,
-      pageSize: page.pageSize,
+      pageNum,
+      pageSize,
       username: searchInfo.username,
       conditions: searchInfo.conditions,
     };
@@ -120,8 +107,8 @@ function UserAdminContainer(): JSX.Element {
       if (res && res.status === 200) {
         setData(res.data.list);
         setPage({
-          pageNum: page.pageNum,
-          pageSize: page.pageSize,
+          pageNum,
+          pageSize,
           total: res.data.total,
         });
       } else {
@@ -132,26 +119,21 @@ function UserAdminContainer(): JSX.Element {
     }
   }
 
-  const searchUsernameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const searchUsernameChange = (e) => {
     if (e.target.value.length < 20) {
-      setSearchInfo({ username: e.target.value });
+      setSearchInfo((prevState) => ({ ...prevState, username: e.target.value }));
     }
   };
 
-  const searchConditionsChange = (v: number): void => {
-    setSearchInfo({ conditions: v });
+  const searchConditionsChange = (v) => {
+    setSearchInfo((prevState) => ({ ...prevState, conditions: v }));
   };
 
-  const onSearch = (): void => {
+  const onSearch = () => {
     onGetData(page);
   };
 
-  const onModalShow = (
-    data: TableRecordData | null,
-    type: operateType
-  ): void => {
+  const onModalShow = (data, type) => {
     setModal({
       modalShow: true,
       nowData: data,
@@ -168,17 +150,18 @@ function UserAdminContainer(): JSX.Element {
     });
   };
 
-  const onOk = async (): Promise<void> => {
+  const onOk = async () => {
     if (modal.operateType === "see") {
       onClose();
       return;
     }
     try {
       const values = await form.validateFields();
-      setModal({
+      setModal((prevState) => ({
+        ...prevState,
         modalLoading: true,
-      });
-      const params: UserBasicInfoParam = {
+      }));
+      const params = {
         username: values.username,
         password: values.password,
         phone: values.phone,
@@ -188,7 +171,7 @@ function UserAdminContainer(): JSX.Element {
       };
       if (modal.operateType === "add") {
         try {
-          const res: Res | undefined = await dispatch.sys.addUser(params);
+          const res = await dispatch.sys.addUser(params);
           if (res && res.status === 200) {
             message.success("添加成功");
             onGetData(page);
@@ -197,14 +180,15 @@ function UserAdminContainer(): JSX.Element {
             message.error(res?.message ?? "操作失败");
           }
         } finally {
-          setModal({
+          setModal((prevState) => ({
+            ...prevState,
             modalLoading: false,
-          });
+          }));
         }
       } else {
         params.id = modal.nowData?.id;
         try {
-          const res: Res | undefined = await dispatch.sys.upUser(params);
+          const res = await dispatch.sys.upUser(params);
           if (res && res.status === 200) {
             message.success("修改成功");
             onGetData(page);
@@ -213,16 +197,18 @@ function UserAdminContainer(): JSX.Element {
             message.error(res?.message ?? "操作失败");
           }
         } finally {
-          setModal({
+          setModal((prevState) => ({
+            ...prevState,
             modalLoading: false,
-          });
+          }));
         }
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const onDel = async (id: number): Promise<void> => {
+  const onDel = async (id) => {
     setLoading(true);
     try {
       const res = await dispatch.sys.delUser({ id });
@@ -238,22 +224,25 @@ function UserAdminContainer(): JSX.Element {
   };
 
   const onClose = () => {
-    setModal({
+    setModal((prevState) => ({
+      ...prevState,
       modalShow: false,
-    });
+    }));
   };
 
-  const onTreeShowClick = (record: TableRecordData): void => {
-    setModal({
+  const onTreeShowClick = (record) => {
+    setModal((prevState) => ({
+      ...prevState,
       nowData: record,
-    });
-    setRole({
+    }));
+    setRole((prevState) => ({
+      ...prevState,
       roleTreeShow: true,
       roleTreeDefault: record.roles || [],
-    });
+    }));
   };
 
-  const onRoleOk = async (keys: string[]): Promise<void> => {
+  const onRoleOk = async (keys) => {
     if (!modal.nowData?.id) {
       message.error("未获取到该条数据id");
       return;
@@ -262,11 +251,12 @@ function UserAdminContainer(): JSX.Element {
       id: modal.nowData.id,
       roles: keys.map((item) => Number(item)),
     };
-    setRole({
+    setRole((prevState) => ({
+      ...prevState,
       roleTreeLoading: true,
-    });
+    }));
     try {
-      const res: Res = await dispatch.sys.setUserRoles(params);
+      const res = await dispatch.sys.setUserRoles(params);
       if (res && res.status === 200) {
         message.success("分配成功");
         onGetData(page);
@@ -275,19 +265,21 @@ function UserAdminContainer(): JSX.Element {
         message.error(res?.message ?? "操作失败");
       }
     } finally {
-      setRole({
+      setRole((prevState) => ({
+        ...prevState,
         roleTreeLoading: false,
-      });
+      }));
     }
   };
 
-  const onRoleClose = (): void => {
-    setRole({
+  const onRoleClose = () => {
+    setRole((prevState) => ({
+      ...prevState,
       roleTreeShow: false,
-    });
+    }));
   };
 
-  const onTablePageChange = (pageNum: number, pageSize: number): void => {
+  const onTablePageChange = (pageNum, pageSize) => {
     onGetData({ pageNum, pageSize });
   };
 
@@ -311,7 +303,7 @@ function UserAdminContainer(): JSX.Element {
       title: "状态",
       dataIndex: "conditions",
       key: "conditions",
-      render: (v: number): JSX.Element =>
+      render: (v) =>
         v === 1 ? (
           <span style={{ color: "blue" }}>账号有效</span>
         ) : (
@@ -322,7 +314,7 @@ function UserAdminContainer(): JSX.Element {
       title: "操作",
       key: "control",
       width: 200,
-      render: (v: null, record: TableRecordData) => {
+      render: (v, record) => {
         const controls = [];
         const u = userinfo.userBasicInfo || { id: -1 };
         p.includes("user:up") &&
@@ -368,7 +360,7 @@ function UserAdminContainer(): JSX.Element {
             </Popconfirm>
           );
 
-        const result: JSX.Element[] = [];
+        const result = [];
         controls.forEach((item, index) => {
           if (index) {
             result.push(<Divider key={`line${index}`} type="vertical" />);

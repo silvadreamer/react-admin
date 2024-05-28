@@ -1,7 +1,6 @@
-
 import React, { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useSetState, useMount } from "react-use";
+import { useMount } from "react-use";
 import {
   Form,
   Button,
@@ -16,7 +15,6 @@ import {
   InputNumber,
 } from "antd";
 import {
-  EyeOutlined,
   EditOutlined,
   ToolOutlined,
   DeleteOutlined,
@@ -40,51 +38,34 @@ const formItemLayout = {
   },
 };
 
-import { RootState, Dispatch } from "@/store";
-import { PowerTreeDefault } from "@/components/TreeChose/PowerTreeTable";
-import {
-  Page,
-  TableRecordData,
-  operateType,
-  ModalType,
-  PowerTreeInfo,
-  SearchInfo,
-  RoleParam,
-  Role,
-  Res,
-} from "./index.type";
-
-
 function RoleAdminContainer() {
-  const dispatch = useDispatch<Dispatch>();
-  const p = useSelector((state: RootState) => state.app.powersCode);
-  const powerTreeData = useSelector(
-    (state: RootState) => state.sys.powerTreeData
-  );
+  const dispatch = useDispatch();
+  const p = useSelector((state) => state.app.powersCode);
+  const powerTreeData = useSelector((state) => state.sys.powerTreeData);
 
   const [form] = Form.useForm();
-  const [data, setData] = useState<Role[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [page, setPage] = useSetState<Page>({
+  const [page, setPage] = useState({
     pageNum: 1,
     pageSize: 10,
     total: 0,
   });
 
-  const [modal, setModal] = useSetState<ModalType>({
+  const [modal, setModal] = useState({
     operateType: "add",
     nowData: null,
     modalShow: false,
     modalLoading: false,
   });
 
-  const [searchInfo, setSearchInfo] = useSetState<SearchInfo>({
+  const [searchInfo, setSearchInfo] = useState({
     title: undefined,
     conditions: undefined,
   });
 
-  const [power, setPower] = useSetState<PowerTreeInfo>({
+  const [power, setPower] = useState({
     treeOnOkLoading: false,
     powerTreeShow: false,
     powerTreeDefault: { menus: [], powers: [] },
@@ -99,7 +80,7 @@ function RoleAdminContainer() {
     dispatch.sys.getAllMenusAndPowers();
   };
 
-  const getData = async (page: { pageNum: number; pageSize: number }) => {
+  const getData = async (page) => {
     if (!p.includes("role:query")) {
       return;
     }
@@ -111,7 +92,7 @@ function RoleAdminContainer() {
     };
     setLoading(true);
     try {
-      const res: Res = await dispatch.sys.getRoles(tools.clearNull(params));
+      const res = await dispatch.sys.getRoles(tools.clearNull(params));
       if (res && res.status === 200) {
         setData(res.data.list);
         setPage({
@@ -127,22 +108,21 @@ function RoleAdminContainer() {
     }
   };
 
-  const searchTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const searchTitleChange = (e) => {
     if (e.target.value.length < 20) {
       setSearchInfo({ title: e.target.value });
     }
   };
 
-  const searchConditionsChange = (v: number) => {
+  const searchConditionsChange = (v) => {
     setSearchInfo({ conditions: v });
   };
 
-  // 搜索
   const onSearch = () => {
     getData(page);
   };
 
-  const onModalShow = (data: TableRecordData | null, type: operateType) => {
+  const onModalShow = (data, type) => {
     setModal({
       modalShow: true,
       nowData: data,
@@ -170,10 +150,11 @@ function RoleAdminContainer() {
 
     try {
       const values = await form.validateFields();
-      setModal({
+      setModal((prevState) => ({
+        ...prevState,
         modalLoading: true,
-      });
-      const params: RoleParam = {
+      }));
+      const params = {
         title: values.formTitle,
         desc: values.formDesc,
         sorts: values.formSorts,
@@ -181,22 +162,23 @@ function RoleAdminContainer() {
       };
       if (modal.operateType === "add") {
         try {
-          const res: Res = await dispatch.sys.addRole(params);
+          const res = await dispatch.sys.addRole(params);
           if (res && res.status === 200) {
             message.success("添加成功");
             getData(page);
-            dispatch.app.updateUserInfo(null); 
+            dispatch.app.updateUserInfo(null);
             onClose();
           }
         } finally {
-          setModal({
+          setModal((prevState) => ({
+            ...prevState,
             modalLoading: false,
-          });
+          }));
         }
       } else {
         params.id = modal?.nowData?.id;
         try {
-          const res: Res = await dispatch.sys.upRole(params);
+          const res = await dispatch.sys.upRole(params);
           if (res && res.status === 200) {
             message.success("修改成功");
             getData(page);
@@ -204,16 +186,18 @@ function RoleAdminContainer() {
             onClose();
           }
         } finally {
-          setModal({
+          setModal((prevState) => ({
+            ...prevState,
             modalLoading: false,
-          });
+          }));
         }
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const onDel = async (id: number) => {
+  const onDel = async (id) => {
     setLoading(true);
     try {
       const res = await dispatch.sys.delRole({ id });
@@ -233,12 +217,11 @@ function RoleAdminContainer() {
     setModal({ modalShow: false });
   };
 
-  const onAllotPowerClick = (record: TableRecordData) => {
+  const onAllotPowerClick = (record) => {
     const menus = record.menuAndPowers.map((item) => item.menuId); // 需默认选中的菜单项ID
-
     const powers = record.menuAndPowers.reduce(
       (v1, v2) => [...v1, ...v2.powers],
-      [] as number[]
+      []
     );
     setModal({ nowData: record });
     setPower({
@@ -247,7 +230,7 @@ function RoleAdminContainer() {
     });
   };
 
-  const onPowerTreeOk = async (arr: PowerTreeDefault) => {
+  const onPowerTreeOk = async (arr) => {
     if (!modal?.nowData?.id) {
       message.error("该数据没有ID");
       return;
@@ -260,7 +243,7 @@ function RoleAdminContainer() {
 
     setPower({ treeOnOkLoading: true });
     try {
-      const res: Res = await dispatch.sys.setPowersByRoleId(params);
+      const res = await dispatch.sys.setPowersByRoleId(params);
       if (res && res.status === 200) {
         getData(page);
         dispatch.app.updateUserInfo(null);
@@ -279,7 +262,7 @@ function RoleAdminContainer() {
     });
   };
 
-  const onTablePageChange = (pageNum: number, pageSize: number | undefined) => {
+  const onTablePageChange = (pageNum, pageSize) => {
     getData({ pageNum, pageSize: pageSize || page.pageSize });
   };
 
@@ -308,7 +291,7 @@ function RoleAdminContainer() {
       title: "是否启用",
       dataIndex: "conditions",
       key: "conditions",
-      render: (v: number) =>
+      render: (v) =>
         v === 1 ? (
           <span style={{ color: "blue" }}>启用中</span>
         ) : (
@@ -319,7 +302,7 @@ function RoleAdminContainer() {
       title: "操作",
       key: "control",
       width: 200,
-      render: (v: number, record: TableRecordData) => {
+      render: (v, record) => {
         const controls = [];
         p.includes("role:up") &&
           controls.push(
@@ -362,7 +345,7 @@ function RoleAdminContainer() {
             </Popconfirm>
           );
 
-        const result: JSX.Element[] = [];
+        const result = [];
         controls.forEach((item, index) => {
           if (index) {
             result.push(<Divider key={`line${index}`} type="vertical" />);
@@ -375,7 +358,7 @@ function RoleAdminContainer() {
   ];
 
   const tableData = useMemo(() => {
-    return data.map((item, index): TableRecordData => {
+    return data.map((item, index) => {
       return {
         key: index,
         id: item.id,
@@ -458,8 +441,8 @@ function RoleAdminContainer() {
       <Modal
         title={{ add: "新增", up: "修改", see: "查看" }[modal.operateType]}
         open={modal.modalShow}
-        onOk={() => onOk()}
-        onCancel={() => onClose()}
+        onOk={onOk}
+        onCancel={onClose}
         confirmLoading={modal.modalLoading}
       >
         <Form
