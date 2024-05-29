@@ -402,17 +402,17 @@ function MenuAdminContainer() {
             />
           </Form.Item>
           <Form.Item
-            label="菜单链接"
+            label="菜单url"
             name="formUrl"
             {...formItemLayout}
             rules={[{ required: true, whitespace: true, message: "必填" }]}
           >
             <Input
-              placeholder="请输入菜单链接"
+              placeholder="请输入菜单url"
               disabled={modal.operateType === "see"}
             />
           </Form.Item>
-          <Form.Item label="图标" name="formIcon" {...formItemLayout}>
+          <Form.Item label="菜单图标" name="formIcon" {...formItemLayout}>
             <Select
               dropdownClassName="iconSelect"
               disabled={modal.operateType === "see"}
@@ -425,7 +425,7 @@ function MenuAdminContainer() {
             </Select>
           </Form.Item>
           <Form.Item
-            label="描述"
+            label="功能描述"
             name="formDesc"
             {...formItemLayout}
             rules={[{ max: 100, message: "最多输入100位字符" }]}
@@ -467,7 +467,7 @@ function MenuAdminContainer() {
           {modal.operateType === "add" ? (
             <Form.Item label="赋予" {...formItemLayout}>
               <span style={{ color: "green" }}>
-                新增菜单后请前往角色管理将菜单授权给相关角色
+               菜单默认关闭，需要对角色进行授权
               </span>
             </Form.Item>
           ) : null}

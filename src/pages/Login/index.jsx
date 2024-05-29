@@ -232,30 +232,25 @@ function LoginContainer() {
               />
             </Form.Item>
             <div style={{ lineHeight: "40px" }}>
-              <Checkbox
-                className="remember"
-                checked={rememberPassword}
-                onChange={onRemember}
-              >
-                记住密码
-              </Checkbox>
+              
+            <Button 
+              className="submit-btn"
+              size="small"
+              type="dashed"
+              loading={loading}
+              onClick={handleRegisterClick}
+              style={{ width: '50%' }}>
+              注册
+              </Button>
               <Button
                 className="submit-btn"
                 size="small"
                 type="primary"
                 loading={loading}
                 onClick={onSubmit}
+                style={{ width: '50%' }}
               >
-                {loading ? "请稍后" : "登录"}
-              </Button>
-
-              <Button 
-              className="submit-btn"
-              size="small"
-              type="dashed"
-              loading={loading}
-              onClick={handleRegisterClick}>
-              注册
+                登录
               </Button>
               
             </div>
@@ -287,6 +282,7 @@ function LoginContainer() {
               { required: true, whitespace: true, message: "必填" },
               { min: 6, message: "最少输入6位字符" },
               { max: 18, message: "最多输入18位字符" },
+              { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,18}$/, message: "密码必须包含大小写字母和数字" },
             ]}
           >
             <Input.Password

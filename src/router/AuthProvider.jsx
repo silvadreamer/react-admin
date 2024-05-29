@@ -5,17 +5,14 @@ import tools from "@/util/tools";
 
 const AuthNoLogin = (props) => {
   const userinfo = useSelector((state) => state.app.userinfo);
-
   if (!userinfo.userBasicInfo) {
     return <Navigate to="/user/login" replace />;
   }
-
   return props.children;
 };
 
 const AuthWithLogin = (props) => {
   const userinfo = useSelector((state) => state.app.userinfo);
-
   if (userinfo.userBasicInfo) {
     return <Navigate to="/home" replace />;
   }
@@ -25,7 +22,6 @@ const AuthWithLogin = (props) => {
 const AuthNoPower = (props) => {
   const location = useLocation();
   const userinfo = useSelector((state) => state.app.userinfo);
-
   const isHavePower = useMemo(() => {
     let menus = [];
     if (userinfo.menus && userinfo.menus.length) {
@@ -36,16 +32,11 @@ const AuthNoPower = (props) => {
       ).menus;
     }
     const m = menus.map((item) => item.url);
-
     return m.includes(location.pathname);
   }, [userinfo, location.pathname]);
-
-  console.log("auth:", userinfo, isHavePower, location.pathname);
-
   if (!isHavePower && location.pathname !== "/401") {
     return <Navigate to="/401" replace />;
   }
-
   return props.children;
 };
 

@@ -10,24 +10,21 @@ import Bread from "@/components/Bread";
 
 const { Content } = Layout;
 
-function BasicLayoutCom() {
+const BasicLayoutCom = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userinfo = useSelector((state) => state.app.userinfo);
   const [collapsed, setCollapsed] = useState(false); // 菜单栏是否收起
 
-  // 退出登录
-  const onLogout = () => {
-    dispatch.app.onLogout().then(() => {
-      message.success("退出成功");
-      navigate("/user/login");
-    });
+  const onLogout = async () => {
+    await dispatch.app.onLogout();
+    message.success("退出成功");
+    navigate("/user/login");
   };
 
   return (
     <Layout className="page-basic" hasSider>
       <MenuCom data={userinfo.menus} collapsed={collapsed} />
-
       <Layout>
         <Header
           collapsed={collapsed}
@@ -42,6 +39,6 @@ function BasicLayoutCom() {
       </Layout>
     </Layout>
   );
-}
+};
 
 export default BasicLayoutCom;

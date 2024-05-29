@@ -16,7 +16,7 @@ export default defineConfig({
     eslintPlugin({
       cache: false,
       failOnError: false,
-      include: ["src/**/*.js", "src/**/*.tsx", "src/**/*.ts"],
+      include: ["src/**/*.js", "src/**/*.jsx", "src/**/*.js"],
     }),
     createStyleImportPlugin({
       resolves: [AntdResolve()]
