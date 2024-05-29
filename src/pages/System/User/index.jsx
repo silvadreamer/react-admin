@@ -125,10 +125,6 @@ function UserAdminContainer() {
     }
   };
 
-  const searchConditionsChange = (v) => {
-    setSearchInfo((prevState) => ({ ...prevState, conditions: v }));
-  };
-
   const onSearch = () => {
     onGetData(page);
   };
@@ -416,18 +412,6 @@ function UserAdminContainer() {
               />
             </li>
             <li>
-              <Select
-                placeholder="请选择状态"
-                allowClear
-                style={{ width: "200px" }}
-                onChange={searchConditionsChange}
-                value={searchInfo.conditions}
-              >
-                <Option value={1}>账号有效</Option>
-                <Option value={-1}>账号禁用中</Option>
-              </Select>
-            </li>
-            <li>
               <Button
                 type="dashed"
                 icon={<SearchOutlined />}
@@ -449,7 +433,6 @@ function UserAdminContainer() {
             current: page.pageNum,
             pageSize: page.pageSize,
             showQuickJumper: true,
-            showTotal: (t) => `共 ${t} 条数据`,
             onChange: onTablePageChange,
           }}
         />
@@ -490,6 +473,7 @@ function UserAdminContainer() {
               { required: true, whitespace: true, message: "必填" },
               { min: 6, message: "最少输入6位字符" },
               { max: 18, message: "最多输入18位字符" },
+              { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,18}$/, message: "密码必须包含大小写字母和数字" }
             ]}
           >
             <Input.Password

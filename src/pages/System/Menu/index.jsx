@@ -115,11 +115,6 @@ function MenuAdminContainer() {
     []
   );
 
-  const getNameByParentId = (id) => {
-    const p = data.find((item) => item.id === id);
-    return p ? p.title : undefined;
-  };
-
   const onModalShow = (data, type) => {
     setModal({
       modalShow: true,
@@ -158,7 +153,6 @@ function MenuAdminContainer() {
     }
     try {
       const values = await form.validateFields();
-
       const params = {
         title: values.formTitle,
         url: values.formUrl,
@@ -209,7 +203,6 @@ function MenuAdminContainer() {
         }
       }
     } catch {
-      // 未通过校验
     }
   };
 
@@ -372,10 +365,6 @@ function MenuAdminContainer() {
           columns={tableColumns}
           loading={loading}
           dataSource={tableData}
-          pagination={{
-            showQuickJumper: true,
-            showTotal: (total) => `共 ${total} 条数据`,
-          }}
         />
       </div>
 

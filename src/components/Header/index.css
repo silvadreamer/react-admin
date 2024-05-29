@@ -1,94 +1,134 @@
-
 .header {
-  background-color: #f8f8f8;
+  background-color: #1f2937;
   padding: 0 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   display: flex;
   align-items: center;
-  .trigger {
-    padding: 0 20px;
-    font-size: 22px;
-    cursor: pointer;
-    line-height: 64px;
-    transition: transform 0.3s, background-color 0.3s;
-    &.fold {
-      transform: rotate(90deg);
-    }
-    &:hover {
-      background-color: #1990FF;
-    }
-  }
-  .rightBox {
-    flex: auto;
-    display: flex;
-    justify-content: flex-end;
-    .userhead {
-      padding: 0 18px;
-      margin-right: 6px;
-      cursor: pointer;
-      font-size: 18px;
-      .username {
-        font-size: 16px;
-        margin-left: 6px;
-      }
-      &:hover {
-        background-color: #1990FF;
-      }
-    }
-  }
 }
-.menu {
-  .anticon {
-    margin-right: 6px;
-  }
-  .ant-dropdown-menu-item {
-    width: 180px;
-  }
+
+.header .trigger {
+  padding: 0 20px;
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 64px;
+  transition: transform 0.3s, background-color 0.3s, color 0.3s;
+  color: #d1d5db;
 }
-.headerPopover {
-  .ant-popover-inner-content {
-    padding: 10px;
-  }
+
+.header .trigger.fold {
+  transform: rotate(90deg);
 }
+
+.header .trigger:hover {
+  background-color: #374151;
+  color: #60a5fa;
+}
+
+.header .rightBox {
+  flex: auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.header .rightBox .userhead {
+  padding: 0 18px;
+  margin-right: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #d1d5db;
+}
+
+.header .rightBox .userhead .username {
+  font-size: 16px;
+  margin-left: 6px;
+}
+
+.header .rightBox .userhead:hover {
+  background-color: #374151;
+  color: #60a5fa;
+}
+
+.menu .anticon {
+  margin-right: 6px;
+  color: #9ca3af;
+}
+
+.menu .ant-dropdown-menu-item {
+  width: 180px;
+  background-color: #374151;
+  color: #d1d5db;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.menu .ant-dropdown-menu-item:hover {
+  background-color: #60a5fa;
+  color: #ffffff;
+}
+
+.headerPopover .ant-popover-inner-content {
+  padding: 10px;
+  background-color: #374151;
+  color: #d1d5db;
+}
+
 .headerTabs {
   max-width: 450px;
-  .ant-tabs-bar {
-    padding: 14px 18px 0 18px;
-  }
-  .ant-tabs-tab {
-    margin: 0 34px 0 0 !important;
-    &:last-child {
-      margin-right: 0 !important;
-    }
-  }
-  .ant-tabs-content {
-    min-height: 220px;
-  }
+}
 
-  .link {
-    display: block;
-    width: 100%;
-    height: 100%;
-    padding: 14px;
-    transition: background-color 0.3s;
-    & + .link {
-      border-top: solid 1px #e0e0e0;
-    }
-    &:hover {
-      background-color: #1990FF;
-    }
-  }
-  .clear {
-    width: 100%;
-    color: #555;
-    transition: color 0.3s, background-color 0.3s;
-    cursor: pointer;
-    border: none;
-    border-top: solid 1px #e0e0e0;
-    &:hover {
-      color: #ff4444;
-      background-color: #1990FF;
-    }
-  }
+.headerTabs .ant-tabs-bar {
+  padding: 14px 18px 0 18px;
+  background-color: #1f2937;
+  color: #d1d5db;
+}
+
+.headerTabs .ant-tabs-tab {
+  margin: 0 34px 0 0 !important;
+  color: #d1d5db;
+}
+
+.headerTabs .ant-tabs-tab:last-child {
+  margin-right: 0 !important;
+}
+
+.headerTabs .ant-tabs-tab:hover {
+  color: #60a5fa;
+}
+
+.headerTabs .ant-tabs-content {
+  min-height: 220px;
+  background-color: #1f2937;
+  color: #d1d5db;
+}
+
+.headerTabs .link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 14px;
+  transition: background-color 0.3s, color 0.3s;
+  color: #d1d5db;
+}
+
+.headerTabs .link + .link {
+  border-top: solid 1px #374151;
+}
+
+.headerTabs .link:hover {
+  background-color: #60a5fa;
+  color: #ffffff;
+}
+
+.headerTabs .clear {
+  width: 100%;
+  color: #9ca3af;
+  transition: color 0.3s, background-color 0.3s;
+  cursor: pointer;
+  border: none;
+  border-top: solid 1px #374151;
+}
+
+.headerTabs .clear:hover {
+  color: #ff4444;
+  background-color: #60a5fa;
 }

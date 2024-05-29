@@ -3,9 +3,8 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import tools from "@/util/tools";
 import Vcode from "react-vcode";
-import { Modal, Form, Input, Button, Checkbox, message } from "antd";
+import { Modal, Form, Input, Button, message } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
-
 import "./index.css";
 import Password from "antd/lib/input/Password";
 
@@ -16,38 +15,20 @@ async function encryptPassword(password) {
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-
 function LoginContainer() {
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalOperateType, setModalOperateType] = useState("");
   const [form] = Form.useForm();
   const [registerForm] = Form.useForm();
-  const [loading, setLoading] = useState(false); 
-  const [rememberPassword, setRememberPassword] = useState(false); 
-  const [codeValue, setCodeValue] = useState("00000");
-  const [show, setShow] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const userLoginInfo = localStorage.getItem("userLoginInfo");
-    if (userLoginInfo) {
-      const userLoginInfoObj = JSON.parse(userLoginInfo);
-      setRememberPassword(true);
-
-      form.setFieldsValue({
-        username: userLoginInfoObj.username,
-        password: tools.uncompile(userLoginInfoObj.password),
-      });
-    }
-    if (!userLoginInfo) {
-      document.getElementById("username")?.focus();
-    } else {
-      document.getElementById("vcode")?.focus();
-    }
+    document.getElementById("username")?.focus();
     setShow(true);
-  }, [form])
+  }, [form]);
 
   const loginIn = useCallback(
     async (username, password) => {
@@ -71,7 +52,7 @@ function LoginContainer() {
         return res2;
       }
 
-      roles = res2.data.filter((item) => item.conditions === 1); // conditions: 1启用 -1禁用
+      roles = res2.data.filter((item) => item.conditions === 1);
       const menuAndPowers = roles.reduce(
         (a, b) => [...a, ...b.menuAndPowers],
         []
@@ -111,28 +92,18 @@ function LoginContainer() {
       const res = await loginIn(values.username, encryptedPassword);
       if (res && res.status === 200) {
         message.success("登录成功");
-        if (rememberPassword) {
-          localStorage.setItem(
-            "userLoginInfo",
-            JSON.stringify({
-              username: values.username,
-              password: encryptedPassword, 
-            })
-          ); 
-        } else {
-          localStorage.removeItem("userLoginInfo");
-        }
         sessionStorage.setItem(
           "userinfo",
           tools.compile(JSON.stringify(res.data))
         );
         await dispatch.app.setUserInfo(res.data);
-        navigate("/"); // 跳转到主页
+        navigate("/");
       } else {
         message.error(res?.message ?? "登录失败");
         setLoading(false);
       }
     } catch (e) {
+      setLoading(false);
     }
   };
 
@@ -156,37 +127,32 @@ function LoginContainer() {
         message.error("用户名已存在");
         return;
       }
-  
+
       const encryptedPassword = await encryptPassword(values.password);
-  
+
       const newUser = {
         id: users.length + 1,
         username: values.username,
-        password: encryptedPassword, // 使用加密后的密码
-        phone: "", 
+        password: encryptedPassword,
+        phone: "",
         email: values.email,
         desc: "普通用户",
-        conditions: 1, 
-        roles: [3], 
+        conditions: 1,
+        roles: [3],
       };
       users.push(newUser);
       localStorage.setItem("users", JSON.stringify(users));
-  
+
       message.success("注册成功");
       setModalVisible(false);
-      form.resetFields(); 
+      form.resetFields();
     } catch (error) {
       console.log("Validate Failed:", error);
     }
   };
-  
 
   const handleCancel = () => {
     setModalVisible(false);
-  };
-
-  const onRemember = (e) => {
-    setRememberPassword(e.target.checked);
   };
 
   return (
@@ -232,15 +198,15 @@ function LoginContainer() {
               />
             </Form.Item>
             <div style={{ lineHeight: "40px" }}>
-              
-            <Button 
-              className="submit-btn"
-              size="small"
-              type="dashed"
-              loading={loading}
-              onClick={handleRegisterClick}
-              style={{ width: '50%' }}>
-              注册
+              <Button
+                className="submit-btn"
+                size="small"
+                type="dashed"
+                loading={loading}
+                onClick={handleRegisterClick}
+                style={{ width: '50%' }}
+              >
+                注册
               </Button>
               <Button
                 className="submit-btn"
@@ -252,7 +218,6 @@ function LoginContainer() {
               >
                 登录
               </Button>
-              
             </div>
           </div>
         </Form>

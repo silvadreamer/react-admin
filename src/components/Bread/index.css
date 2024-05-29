@@ -2,9 +2,10 @@
   padding: 16px;
   display: flex;
   align-items: center;
-  .icon {
-    flex: none;
-    color: #1990FF;
-    margin-right: 20px;
-  }
+}
+
+.bread .icon {
+  flex: none;
+  color: #1990FF;
+  margin-right: 20px;
 }

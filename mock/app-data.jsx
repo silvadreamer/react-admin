@@ -39,7 +39,6 @@ let users = [
   },
 ];
 
-// 所有的菜单数据
 let menus = [
   {
     id: 1,
@@ -123,7 +122,6 @@ let menus = [
   },
 ];
 
-// 所有的权限数据
 let powers = [
   {
     id: 1,
@@ -291,7 +289,7 @@ let powers = [
     conditions: 1,
   },
 ];
-// 所有的角色数据
+
 let roles = [
   {
     id: 1,
@@ -307,7 +305,6 @@ let roles = [
       { menuId: 5, powers: [] },
       { menuId: 6, powers: [1, 2, 3, 4, 5] },
       { menuId: 7, powers: [6, 7, 8, 9, 18] },
-      // { menuId: 8, powers: [10, 11, 12, 13] },
       { menuId: 8, powers: [14, 15, 16, 17] },
     ],
   },
@@ -374,7 +371,6 @@ const decode = function (str) {
   }
 };
 
-// 登录
 const onLogin = function (p) {
   const local_users = JSON.parse(localStorage.getItem("users")) || [];
   const u = local_users.find(function (item) {
@@ -389,14 +385,12 @@ const onLogin = function (p) {
   return { status: 200, data: u, message: "登录成功" };
 };
 
-// 获取所有菜单
 const getMenus = (p) => ({
   status: 200,
   data: JSON.parse(localStorage.getItem("menus")),
   message: "success",
 });
 
-// 获取菜单（根据ID）
 const getMenusById = (p) => {
   const local_menus = JSON.parse(localStorage.getItem("menus"));
   const res = Array.isArray(p.id)
@@ -405,7 +399,6 @@ const getMenusById = (p) => {
   return { status: 200, data: res, message: "success" };
 };
 
-// 添加新菜单
 const addMenu = (p) => {
   p.id = ++id_sequence;
   const menus = JSON.parse(localStorage.getItem("menus")) || [];
@@ -418,7 +411,6 @@ const addMenu = (p) => {
   };
 };
 
-// 修改菜单
 const upMenu = (p) => {
   let menus = JSON.parse(localStorage.getItem("menus"));
   const index = menus.findIndex((item) => item.id === p.id);
@@ -435,7 +427,6 @@ const upMenu = (p) => {
   }
 };
 
-// 删除菜单
 const delMenu = (p) => {
   let menus = JSON.parse(localStorage.getItem("menus"));
   const index = menus.findIndex((item) => item.id === p.id);
@@ -457,7 +448,6 @@ const delMenu = (p) => {
   }
 };
 
-// 根据菜单ID查询其下权限
 const getPowerByMenuId = (p) => {
   const menuId = Number(p.menuId);
   const res = menuId
@@ -466,7 +456,6 @@ const getPowerByMenuId = (p) => {
   return { status: 200, data: res, message: "success" };
 };
 
-// 根据权限ID查询对应的权限
 const getPowerById = (p) => {
   const res = Array.isArray(p.id)
     ? powers.filter((item) => p.id.includes(item.id))
@@ -474,14 +463,12 @@ const getPowerById = (p) => {
   return { status: 200, data: res, message: "success" };
 };
 
-// 添加权限
 const addPower = (p) => {
   p.id = ++id_sequence;
   powers.push(p);
   return { status: 200, data: { id: p.id }, message: "success" };
 };
 
-// 修改权限
 const upPower = (p) => {
   const index = powers.findIndex((item) => item.id === p.id);
   if (index !== -1) {
@@ -492,7 +479,6 @@ const upPower = (p) => {
   }
 };
 
-// 删除权限
 const delPower = (p) => {
   const powers = JSON.parse(localStorage.getItem("powers"));
   const index = powers.findIndex((item) => item.id === p.id);
@@ -505,7 +491,6 @@ const delPower = (p) => {
   }
 };
 
-// 查询角色
 const getRoles = (p) => {
   const roles = JSON.parse(localStorage.getItem("roles"));
   const filteredRoles = roles.filter((item) => {
@@ -522,14 +507,12 @@ const getRoles = (p) => {
   };
 };
 
-// 获取所有角色
 const getAllRoles = (p) => ({
   status: 200,
   data: JSON.parse(localStorage.getItem("roles")),
   message: "success",
 });
 
-// 根据角色ID获取角色
 const getRoleById = (p) => {
   const roles = JSON.parse(localStorage.getItem("roles"));
   const res = Array.isArray(p.id)
@@ -538,7 +521,6 @@ const getRoleById = (p) => {
   return { status: 200, data: res, message: "success" };
 };
 
-// 添加角色
 const addRole = (p) => {
   p.id = ++id_sequence;
   p.menuAndPowers = p.menuAndPowers || [];
@@ -546,7 +528,6 @@ const addRole = (p) => {
   return { status: 200, data: null, message: "success" };
 };
 
-// 修改角色
 const upRole = (p) => {
   const roles = JSON.parse(localStorage.getItem("roles"));
   const index = roles.findIndex((item) => item.id === p.id);
@@ -559,7 +540,6 @@ const upRole = (p) => {
   }
 };
 
-// 删除角色
 const delRole = (p) => {
   const roles = JSON.parse(localStorage.getItem("roles"));
   const index = roles.findIndex((item) => item.id === p.id);
@@ -572,7 +552,6 @@ const delRole = (p) => {
   }
 };
 
-// 根据ID查询该角色的菜单和权限
 const findAllPowerByRoleId = (p) => {
   const roles = JSON.parse(localStorage.getItem("roles"));
   const role = roles.find((item) => item.id === p.id);
@@ -592,7 +571,6 @@ const findAllPowerByRoleId = (p) => {
   return { status: 200, data: res, message: "success" };
 };
 
-// 获取所有菜单和权限
 const getAllMenusAndPowers = (p) => {
   const res = menus.map((item) => {
     const powersList = powers.filter((v) => v.menu === item.id && v.conditions === 1);
@@ -601,7 +579,6 @@ const getAllMenusAndPowers = (p) => {
   return { status: 200, data: res, message: "success" };
 };
 
-// 给指定角色分配菜单和权限
 const setPowersByRoleId = (p) => {
   const roles = JSON.parse(localStorage.getItem("roles"));
   const roleIndex = roles.findIndex((item) => item.id === p.id);
@@ -627,7 +604,6 @@ const setPowersByRoleId = (p) => {
   return { status: 200, data: null, message: "success" };
 };
 
-// 给多个角色分配菜单和权限
 const setPowersByRoleIds = (ps) => {
   const roles = JSON.parse(localStorage.getItem("roles"));
 
@@ -653,7 +629,6 @@ const setPowersByRoleIds = (ps) => {
   return { status: 200, data: null, message: "success" };
 };
 
-// 获取用户列表
 const getUserList = (p) => {
   const users = JSON.parse(localStorage.getItem("users"));
   const username = decode(p.username);
@@ -675,7 +650,6 @@ const getUserList = (p) => {
   };
 };
 
-// 添加用户
 const addUser = (p) => {
   p.id = ++id_sequence;
   const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -684,7 +658,6 @@ const addUser = (p) => {
   return { status: 200, data: null, message: "success" };
 };
 
-// 修改用户
 const upUser = (p) => {
   const users = JSON.parse(localStorage.getItem("users"));
   const index = users.findIndex((item) => item.id === p.id);
@@ -697,7 +670,6 @@ const upUser = (p) => {
   }
 };
 
-// 删除用户
 const delUser = (p) => {
   const users = JSON.parse(localStorage.getItem("users"));
   const index = users.findIndex((item) => item.id === p.id);

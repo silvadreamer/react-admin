@@ -2,52 +2,60 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  .l {
-    width: 100%;
-    border: 2px solid #d1d1d1;
-    flex: none;
-    background-color: #eaeef3;
-    .title {
-      height: 50px;
-      line-height: 50px;
-      box-sizing: border-box;
-      font-size: 18px;
-      padding: 0 12px;
-      border-bottom: 2px solid #d1d1d1;
-      background-color: #fafafa;
-      color: #2c2c2c;
-      font-weight: 600;
-    }
-  }
-  .r {
-    border: 2px solid #d1d1d1;
-    margin-top: 12px;
-    flex: auto;
-    background-color: #fafafa;
-    .searchBox {
-      padding: 10px;
-      background-color: #eaeef3;
-      border-bottom: 2px solid #d1d1d1;
-      & > ul {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        & > li {
-          padding: 6px 12px;
-          background-color: #fff;
-          border: 2px solid #b3b3b3;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: background-color 0.3s, border-color 0.3s;
-          &:hover {
-            background-color: #d4eaff;
-            border-color: #6bb7ff;
-          }
-        }
-      }
-    }
-    .ant-table-pagination.ant-pagination {
-      margin-right: 12px;
-    }
-  }
+}
+
+.page-menu-admin .l {
+  width: 100%;
+  border: 2px solid #d1d1d1;
+  flex: none;
+  background-color: #eaeef3;
+}
+
+.page-menu-admin .l .title {
+  height: 50px;
+  line-height: 50px;
+  box-sizing: border-box;
+  font-size: 18px;
+  padding: 0 12px;
+  border-bottom: 2px solid #d1d1d1;
+  background-color: #fafafa;
+  color: #2c2c2c;
+  font-weight: 600;
+}
+
+.page-menu-admin .r {
+  border: 2px solid #d1d1d1;
+  margin-top: 12px;
+  flex: auto;
+  background-color: #fafafa;
+}
+
+.page-menu-admin .r .searchBox {
+  padding: 10px;
+  background-color: #eaeef3;
+  border-bottom: 2px solid #d1d1d1;
+}
+
+.page-menu-admin .r .searchBox > ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.page-menu-admin .r .searchBox > ul > li {
+  padding: 6px 12px;
+  background-color: #fff;
+  border: 2px solid #b3b3b3;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.page-menu-admin .r .searchBox > ul > li:hover {
+  background-color: #d4eaff;
+  border-color: #6bb7ff;
+}
+
+.page-menu-admin .r .ant-table-pagination.ant-pagination {
+  margin-right: 12px;
 }

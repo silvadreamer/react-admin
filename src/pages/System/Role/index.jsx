@@ -22,7 +22,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 
-import tools from "@/util/tools"; // 工具
+import tools from "@/util/tools";
 import PowerTreeCom from "@/components/TreeChose/PowerTreeTable";
 
 const { TextArea } = Input;
@@ -218,7 +218,7 @@ function RoleAdminContainer() {
   };
 
   const onAllotPowerClick = (record) => {
-    const menus = record.menuAndPowers.map((item) => item.menuId); // 需默认选中的菜单项ID
+    const menus = record.menuAndPowers.map((item) => item.menuId); 
     const powers = record.menuAndPowers.reduce(
       (v1, v2) => [...v1, ...v2.powers],
       []
@@ -397,18 +397,6 @@ function RoleAdminContainer() {
                 onChange={searchTitleChange}
                 value={searchInfo.title}
               />
-            </li>
-            <li>
-              <Select
-                placeholder="请选择状态"
-                allowClear
-                style={{ width: "200px" }}
-                onChange={searchConditionsChange}
-                value={searchInfo.conditions}
-              >
-                <Option value={1}>启用中</Option>
-                <Option value={-1}>禁用中</Option>
-              </Select>
             </li>
             <li>
               <Button

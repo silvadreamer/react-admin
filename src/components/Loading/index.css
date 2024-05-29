@@ -5,7 +5,8 @@
   position: relative;
   margin: 0 auto;
   color: #1722e6;
-  img {
-    margin-bottom: 20px;
-  }
+}
+
+.loading img {
+  margin-bottom: 20px;
 }

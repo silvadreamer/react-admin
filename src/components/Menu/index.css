@@ -1,60 +1,58 @@
-
 .sider {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   min-height: 100vh;
   background-color: #1c1e24;
-  .menuLogo {
-    height: 64px;
-    background-color: #2c2f36; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
+}
 
-    &.hide {
-      a {
-        justify-content: center;
-        div {
-          overflow: hidden;
-          opacity: 0;
-          width: 0;
-        }
-      }
-    }
+.sider .menuLogo {
+  height: 64px;
+  background-color: #2c2f36;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
 
-    a {
-      display: flex;
-      height: 100%;
-      align-items: center;
-      img {
-        width: 40px;
-        flex: none;
-        margin-left: 12px;
-        transition: transform 0.3s ease;
-      }
-      div {
-        color: #f0f0f0;
-        width: 100%;
-        font-size: 24px;
-        padding-left: 10px;
-        white-space: nowrap;
-        transition: all 0.3s ease;
-      }
+.sider .menuLogo.hide a {
+  justify-content: center;
+}
 
-      &:hover {
-        img {
-          transform: scale(1.1);
-        }
-        div {
-          color: #a29bfe; 
-        }
-      }
-    }
-  }
+.sider .menuLogo.hide a div {
+  overflow: hidden;
+  opacity: 0;
+  width: 0;
+}
 
-  .menuLogo a {
-    &:hover div {
-      color: #a29bfe;
-    }
-  }
+.sider .menuLogo a {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.sider .menuLogo a img {
+  width: 40px;
+  flex: none;
+  margin-left: 12px;
+  transition: transform 0.3s ease;
+}
+
+.sider .menuLogo a div {
+  color: #f0f0f0;
+  width: 100%;
+  font-size: 24px;
+  padding-left: 10px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.sider .menuLogo a:hover img {
+  transform: scale(1.1);
+}
+
+.sider .menuLogo a:hover div {
+  color: #a29bfe;
+}
+
+.sider .menuLogo a:hover div {
+  color: #a29bfe;
 }

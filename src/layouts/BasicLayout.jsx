@@ -14,7 +14,7 @@ const BasicLayoutCom = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userinfo = useSelector((state) => state.app.userinfo);
-  const [collapsed, setCollapsed] = useState(false); // 菜单栏是否收起
+  const [collapsed, setCollapsed] = useState(false);
 
   const onLogout = async () => {
     await dispatch.app.onLogout();
