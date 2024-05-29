@@ -79,32 +79,36 @@ function UserAdminContainer() {
   const getAllRolesData = async () => {
     try {
       const res = await dispatch.sys.getAllRoles();
-      if (res && res.status === 200) {
+      if (res?.status === 200) {
         setRole((prevState) => ({
           ...prevState,
           roleData: res.data,
         }));
+      } else {
+        message.error(res?.message ?? "获取角色数据失败");
       }
     } catch (error) {
       console.error(error);
+      message.error("获取角色数据失败");
     }
   };
-
+  
   async function onGetData({ pageNum, pageSize }) {
     if (!p.includes("user:query")) {
       return;
     }
-
+  
     const params = {
       pageNum,
       pageSize,
       username: searchInfo.username,
       conditions: searchInfo.conditions,
     };
+  
     setLoading(true);
     try {
       const res = await dispatch.sys.getUserList(tools.clearNull(params));
-      if (res && res.status === 200) {
+      if (res?.status === 200) {
         setData(res.data.list);
         setPage({
           pageNum,
@@ -118,17 +122,17 @@ function UserAdminContainer() {
       setLoading(false);
     }
   }
-
+  
   const searchUsernameChange = (e) => {
-    if (e.target.value.length < 20) {
+    if ( e.target.value.length < 20 ) {
       setSearchInfo((prevState) => ({ ...prevState, username: e.target.value }));
     }
   };
-
+  
   const onSearch = () => {
     onGetData(page);
   };
-
+  
   const onModalShow = (data, type) => {
     setModal({
       modalShow: true,
@@ -139,93 +143,78 @@ function UserAdminContainer() {
       if (type === "add") {
         form.resetFields();
       } else if (data) {
-        form.setFieldsValue({
-          ...data,
-        });
+        form.setFieldsValue({ ...data });
       }
     });
   };
-
-  const onOk = async () => {
-    if (modal.operateType === "see") {
-      onClose();
-      return;
-    }
+  
+  const handleUserAction = async (params, actionType) => {
+    setModal((prevState) => ({
+      ...prevState,
+      modalLoading: true,
+    }));
+  
     try {
-      const values = await form.validateFields();
-      setModal((prevState) => ({
-        ...prevState,
-        modalLoading: true,
-      }));
-      const params = {
-        username: values.username,
-        password: values.password,
-        phone: values.phone,
-        email: values.email,
-        desc: values.desc,
-        conditions: values.conditions,
-      };
-      if (modal.operateType === "add") {
-        try {
-          const res = await dispatch.sys.addUser(params);
-          if (res && res.status === 200) {
-            message.success("添加成功");
-            onGetData(page);
-            onClose();
-          } else {
-            message.error(res?.message ?? "操作失败");
-          }
-        } finally {
-          setModal((prevState) => ({
-            ...prevState,
-            modalLoading: false,
-          }));
-        }
+      const res = actionType === "add"
+        ? await dispatch.sys.addUser(params)
+        : await dispatch.sys.upUser(params);
+  
+      if (res?.status === 200) {
+        message.success(actionType === "add" ? "添加成功" : "修改成功");
+        onGetData(page);
+        onClose();
       } else {
-        params.id = modal.nowData?.id;
-        try {
-          const res = await dispatch.sys.upUser(params);
-          if (res && res.status === 200) {
-            message.success("修改成功");
-            onGetData(page);
-            onClose();
-          } else {
-            message.error(res?.message ?? "操作失败");
-          }
-        } finally {
-          setModal((prevState) => ({
-            ...prevState,
-            modalLoading: false,
-          }));
-        }
+        message.error(res?.message ?? (actionType === "add" ? "添加失败" : "修改失败"));
       }
     } catch (error) {
       console.error(error);
+      message.error(actionType === "add" ? "添加失败" : "修改失败");
+    } finally {
+      setModal((prevState) => ({
+        ...prevState,
+        modalLoading: false,
+      }));
     }
   };
 
+  const handleResponse = async (apiCall, successMessage, errorMessage) => {
+    try {
+      const res = await apiCall();
+      if (res?.status === 200) {
+        message.success(successMessage);
+        onGetData(page);
+        return true;
+      } else {
+        message.error(res?.message ?? errorMessage);
+        return false;
+      }
+    } catch (error) {
+      console.error(error);
+      message.error(errorMessage);
+      return false;
+    }
+  };
+  
   const onDel = async (id) => {
     setLoading(true);
     try {
-      const res = await dispatch.sys.delUser({ id });
-      if (res && res.status === 200) {
-        message.success("删除成功");
-        onGetData(page);
-      } else {
-        message.error(res?.message ?? "操作失败");
-      }
+      await handleResponse(
+        () => dispatch.sys.delUser({ id }),
+        "删除成功",
+        "操作失败"
+      );
     } finally {
       setLoading(false);
     }
   };
-
+  
   const onClose = () => {
     setModal((prevState) => ({
       ...prevState,
       modalShow: false,
     }));
   };
-
+  
   const onTreeShowClick = (record) => {
     setModal((prevState) => ({
       ...prevState,
@@ -237,28 +226,31 @@ function UserAdminContainer() {
       roleTreeDefault: record.roles || [],
     }));
   };
-
+  
   const onRoleOk = async (keys) => {
     if (!modal.nowData?.id) {
       message.error("未获取到该条数据id");
       return;
     }
+  
     const params = {
       id: modal.nowData.id,
-      roles: keys.map((item) => Number(item)),
+      roles: keys.map(Number),
     };
+  
     setRole((prevState) => ({
       ...prevState,
       roleTreeLoading: true,
     }));
+  
     try {
-      const res = await dispatch.sys.setUserRoles(params);
-      if (res && res.status === 200) {
-        message.success("分配成功");
-        onGetData(page);
+      const success = await handleResponse(
+        () => dispatch.sys.setUserRoles(params),
+        "分配成功",
+        "操作失败"
+      );
+      if (success) {
         onRoleClose();
-      } else {
-        message.error(res?.message ?? "操作失败");
       }
     } finally {
       setRole((prevState) => ({
@@ -267,17 +259,50 @@ function UserAdminContainer() {
       }));
     }
   };
-
+  
   const onRoleClose = () => {
     setRole((prevState) => ({
       ...prevState,
       roleTreeShow: false,
     }));
   };
-
+  
   const onTablePageChange = (pageNum, pageSize) => {
     onGetData({ pageNum, pageSize });
   };
+  
+
+  // const onClose = () => {
+  //   setModal({ modalShow: false });
+  // };
+  
+  const onOk = async () => {
+    if (modal.operateType === "see") {
+      onClose();
+      return;
+    }
+  
+    try {
+      const values = await form.validateFields();
+      const params = {
+        username: values.username,
+        password: values.password,
+        phone: values.phone,
+        email: values.email,
+        desc: values.desc,
+        conditions: values.conditions,
+      };
+  
+      if (modal.operateType === "edit") {
+        params.id = modal.nowData?.id;
+      }
+  
+      handleUserAction(params, modal.operateType);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   const tableColumns = [
     {

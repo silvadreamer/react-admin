@@ -76,24 +76,151 @@ function RoleAdminContainer() {
     getPowerTreeData();
   });
 
+  const handleRoleAction = async (params, actionType) => {
+    setModal((prevState) => ({
+      ...prevState,
+      modalLoading: true,
+    }));
+  
+    try {
+      const res = actionType === "add"
+        ? await dispatch.sys.addRole(params)
+        : await dispatch.sys.upRole(params);
+  
+      if (res?.status === 200) {
+        message.success(actionType === "add" ? "添加成功" : "修改成功");
+        getData(page);
+        dispatch.app.updateUserInfo(null);
+        onClose();
+      } else {
+        message.error(res?.message ?? (actionType === "add" ? "添加失败" : "修改失败"));
+      }
+    } finally {
+      setModal((prevState) => ({
+        ...prevState,
+        modalLoading: false,
+      }));
+    }
+  };
+  
+  const onOk = async () => {
+    if (modal.operateType === "see") {
+      onClose();
+      return;
+    }
+  
+    try {
+      const values = await form.validateFields();
+      const params = {
+        title: values.formTitle,
+        desc: values.formDesc,
+        sorts: values.formSorts,
+        conditions: values.formConditions,
+      };
+  
+      if (modal.operateType === "edit") {
+        params.id = modal?.nowData?.id;
+      }
+  
+      handleRoleAction(params, modal.operateType);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  const onDel = async (id) => {
+    setLoading(true);
+    try {
+      const res = await dispatch.sys.delRole({ id });
+      if (res?.status === 200) {
+        message.success("删除成功");
+        getData(page);
+        dispatch.app.updateUserInfo(null);
+      } else {
+        message.error(res?.message ?? "操作失败");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const onClose = () => {
+    setModal({ modalShow: false });
+  };  
+
+  const onAllotPowerClick = (record) => {
+    const menus = record.menuAndPowers.map((item) => item.menuId); 
+    const powers = record.menuAndPowers.reduce((acc, item) => [...acc, ...item.powers], []);
+    
+    setModal({ nowData: record });
+    setPower({
+      powerTreeShow: true,
+      powerTreeDefault: { menus, powers },
+    });
+  };
+  
+  const onPowerTreeOk = async (arr) => {
+    if (!modal?.nowData?.id) {
+      message.error("该数据没有ID");
+      return;
+    }
+    
+    const params = {
+      id: modal.nowData.id,
+      menus: arr.menus,
+      powers: arr.powers,
+    };
+  
+    setPower({ treeOnOkLoading: true });
+    try {
+      const res = await dispatch.sys.setPowersByRoleId(params);
+      if (res?.status === 200) {
+        message.success("权限分配成功");
+        getData(page);
+        dispatch.app.updateUserInfo(null);
+        onPowerTreeClose();
+      } else {
+        message.error(res?.message ?? "权限分配失败");
+      }
+    } catch (error) {
+      message.error("权限分配失败");
+      console.error(error);
+    } finally {
+      setPower({ treeOnOkLoading: false });
+    }
+  };
+  
+  const onPowerTreeClose = () => {
+    setPower({
+      powerTreeShow: false,
+      treeOnOkLoading: false,
+    });
+  };
+  
+  const onTablePageChange = (pageNum, pageSize) => {
+    getData({ pageNum, pageSize: pageSize || page.pageSize });
+  };
+
   const getPowerTreeData = () => {
     dispatch.sys.getAllMenusAndPowers();
   };
-
+  
   const getData = async (page) => {
     if (!p.includes("role:query")) {
       return;
     }
+  
     const params = {
       pageNum: page.pageNum,
       pageSize: page.pageSize,
       title: searchInfo.title,
       conditions: searchInfo.conditions,
     };
+  
     setLoading(true);
     try {
       const res = await dispatch.sys.getRoles(tools.clearNull(params));
-      if (res && res.status === 200) {
+      if (res?.status === 200) {
         setData(res.data.list);
         setPage({
           total: res.data.total,
@@ -107,27 +234,28 @@ function RoleAdminContainer() {
       setLoading(false);
     }
   };
-
+  
   const searchTitleChange = (e) => {
     if (e.target.value.length < 20) {
-      setSearchInfo({ title: e.target.value });
+      setSearchInfo((prevState) => ({ ...prevState, title: e.target.value }));
     }
   };
-
+  
   const searchConditionsChange = (v) => {
-    setSearchInfo({ conditions: v });
+    setSearchInfo((prevState) => ({ ...prevState, conditions: v }));
   };
-
+  
   const onSearch = () => {
     getData(page);
   };
-
+  
   const onModalShow = (data, type) => {
     setModal({
       modalShow: true,
       nowData: data,
       operateType: type,
     });
+  
     setTimeout(() => {
       if (type === "add") {
         form.resetFields();
@@ -142,129 +270,6 @@ function RoleAdminContainer() {
     });
   };
 
-  const onOk = async () => {
-    if (modal.operateType === "see") {
-      onClose();
-      return;
-    }
-
-    try {
-      const values = await form.validateFields();
-      setModal((prevState) => ({
-        ...prevState,
-        modalLoading: true,
-      }));
-      const params = {
-        title: values.formTitle,
-        desc: values.formDesc,
-        sorts: values.formSorts,
-        conditions: values.formConditions,
-      };
-      if (modal.operateType === "add") {
-        try {
-          const res = await dispatch.sys.addRole(params);
-          if (res && res.status === 200) {
-            message.success("添加成功");
-            getData(page);
-            dispatch.app.updateUserInfo(null);
-            onClose();
-          }
-        } finally {
-          setModal((prevState) => ({
-            ...prevState,
-            modalLoading: false,
-          }));
-        }
-      } else {
-        params.id = modal?.nowData?.id;
-        try {
-          const res = await dispatch.sys.upRole(params);
-          if (res && res.status === 200) {
-            message.success("修改成功");
-            getData(page);
-            dispatch.app.updateUserInfo(null);
-            onClose();
-          }
-        } finally {
-          setModal((prevState) => ({
-            ...prevState,
-            modalLoading: false,
-          }));
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const onDel = async (id) => {
-    setLoading(true);
-    try {
-      const res = await dispatch.sys.delRole({ id });
-      if (res && res.status === 200) {
-        message.success("删除成功");
-        getData(page);
-        dispatch.app.updateUserInfo(null);
-      } else {
-        message.error(res?.message ?? "操作失败");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onClose = () => {
-    setModal({ modalShow: false });
-  };
-
-  const onAllotPowerClick = (record) => {
-    const menus = record.menuAndPowers.map((item) => item.menuId); 
-    const powers = record.menuAndPowers.reduce(
-      (v1, v2) => [...v1, ...v2.powers],
-      []
-    );
-    setModal({ nowData: record });
-    setPower({
-      powerTreeShow: true,
-      powerTreeDefault: { menus, powers },
-    });
-  };
-
-  const onPowerTreeOk = async (arr) => {
-    if (!modal?.nowData?.id) {
-      message.error("该数据没有ID");
-      return;
-    }
-    const params = {
-      id: modal.nowData.id,
-      menus: arr.menus,
-      powers: arr.powers,
-    };
-
-    setPower({ treeOnOkLoading: true });
-    try {
-      const res = await dispatch.sys.setPowersByRoleId(params);
-      if (res && res.status === 200) {
-        getData(page);
-        dispatch.app.updateUserInfo(null);
-        onPowerTreeClose();
-      } else {
-        message.error(res?.message ?? "权限分配失败");
-      }
-    } finally {
-      setPower({ treeOnOkLoading: false });
-    }
-  };
-
-  const onPowerTreeClose = () => {
-    setPower({
-      powerTreeShow: false,
-    });
-  };
-
-  const onTablePageChange = (pageNum, pageSize) => {
-    getData({ pageNum, pageSize: pageSize || page.pageSize });
-  };
 
   const tableColumns = [
     {
