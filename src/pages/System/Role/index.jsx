@@ -241,10 +241,6 @@ function RoleAdminContainer() {
     }
   };
   
-  const searchConditionsChange = (v) => {
-    setSearchInfo((prevState) => ({ ...prevState, conditions: v }));
-  };
-  
   const onSearch = () => {
     getData(page);
   };

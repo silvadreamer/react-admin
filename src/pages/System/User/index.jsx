@@ -271,10 +271,6 @@ function UserAdminContainer() {
     onGetData({ pageNum, pageSize });
   };
   
-
-  // const onClose = () => {
-  //   setModal({ modalShow: false });
-  // };
   
   const onOk = async () => {
     if (modal.operateType === "see") {

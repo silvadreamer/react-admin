@@ -2,11 +2,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import tools from "@/util/tools";
-import Vcode from "react-vcode";
 import { Modal, Form, Input, Button, message } from "antd";
 import { UserOutlined, KeyOutlined } from "@ant-design/icons";
 import "./index.css";
-import Password from "antd/lib/input/Password";
 
 async function encryptPassword(password) {
   const encoder = new TextEncoder();
