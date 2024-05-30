@@ -58,69 +58,6 @@ function MenuAdminContainer() {
 
   const [treeSelect, setTreeSelect] = useState({ title: "", id: null });
 
-  const onClose = () => setModal({ modalShow: false });
-  const onOk = async () => {
-    if (modal.operateType === "see") {
-      onClose();
-      return;
-    }
-  
-    try {
-      const values = await form.validateFields();
-      const params = {
-        title: values.formTitle,
-        url: values.formUrl,
-        icon: values.formIcon,
-        parent: Number(treeSelect.id) || null,
-        sorts: values.formSorts,
-        desc: values.formDesc,
-        conditions: values.formConditions,
-      };
-  
-      setModal((prevState) => ({
-        ...prevState,
-        modalLoading: true,
-      }));
-  
-      const res = modal.operateType === "add"
-        ? await dispatch.sys.addMenu(params)
-        : await dispatch.sys.upMenu({ ...params, id: modal?.nowData?.id });
-  
-      if (res?.status === 200) {
-        message.success(modal.operateType === "add" ? "添加成功" : "修改成功");
-        getData();
-        onClose();
-        dispatch.app.updateUserInfo(null);
-      } else {
-        message.error(modal.operateType === "add" ? "添加失败" : "修改失败");
-      }
-    } catch (error) {
-      message.error("操作失败");
-    } finally {
-      setModal((prevState) => ({
-        ...prevState,
-        modalLoading: false,
-      }));
-    }
-  };
-  
-  const onDel = async (record) => {
-    const params = { id: record.id };
-  
-    try {
-      const res = await dispatch.sys.delMenu(params);
-      if (res?.status === 200) {
-        message.success("删除成功");
-        getData();
-        dispatch.app.updateUserInfo(null);
-      } else {
-        message.error(res?.message ?? "操作失败");
-      }
-    } catch (error) {
-      message.error("操作失败");
-    }
-  };
-  
   useMount(() => {
     getData();
   });
@@ -132,7 +69,7 @@ function MenuAdminContainer() {
     setLoading(true);
     try {
       const res = await dispatch.sys.getMenus();
-      if (res?.status === 200) {
+      if (res && res.status === 200) {
         setData(res.data);
       }
     } finally {
@@ -141,37 +78,144 @@ function MenuAdminContainer() {
   };
 
   const dataToJson = useCallback((one, data) => {
-    const kids = data.filter(item => one ? item.parent === one.id : !item.parent);
-    return kids.map(item => ({ ...item, children: dataToJson(item, data) }));
+    let kids;
+    if (!one) {
+      kids = data.filter((item) => !item.parent);
+    } else {
+      kids = data.filter((item) => item.parent === one.id);
+    }
+    kids.forEach((item) => (item.children = dataToJson(item, data)));
+    return kids.length ? kids : undefined;
   }, []);
 
   const makeKey = useCallback((data) => {
-    return data.map(item => ({
-      ...item,
-      key: item.id,
-      children: item.children ? makeKey(item.children) : undefined,
-    }));
+    const newData = [];
+    for (let i = 0; i < data.length; i++) {
+      const item = { ...data[i] };
+      if (item.children) {
+        item.children = makeKey(item.children);
+      }
+      const treeItem = {
+        ...item,
+        key: item.id,
+      };
+      newData.push(treeItem);
+    }
+    return newData;
   }, []);
 
-  const onTreeSelect = useCallback((keys, info) => {
-    setTreeSelect(info.selected ? { title: info.node.title, id: info.node.id } : {});
-  }, []);
+  const onTreeSelect = useCallback(
+    (keys, info) => {
+      let treeSelect = {};
+      if (info.selected) {
+        treeSelect = { title: info.node.title, id: info.node.id };
+      }
+      setTreeSelect(treeSelect);
+    },
+    []
+  );
 
   const onModalShow = (data, type) => {
-    setModal({ modalShow: true, nowData: data, operateType: type });
+    setModal({
+      modalShow: true,
+      nowData: data,
+      operateType: type,
+    });
+
     setTimeout(() => {
-      form.resetFields();
-      if (type !== "add" && data) {
-        form.setFieldsValue({
-          formConditions: data.conditions,
-          formDesc: data.desc,
-          formIcon: data.icon,
-          formSorts: data.sorts,
-          formTitle: data.title,
-          formUrl: data.url,
-        });
+      if (type === "add") {
+        form.resetFields();
+      } else {
+        if (data) {
+          form.setFieldsValue({
+            formConditions: data.conditions,
+            formDesc: data.desc,
+            formIcon: data.icon,
+            formSorts: data.sorts,
+            formTitle: data.title,
+            formUrl: data.url,
+          });
+        }
       }
     });
+  };
+
+  const onClose = () => {
+    setModal({
+      modalShow: false,
+    });
+  };
+
+  const onOk = async () => {
+    if (modal.operateType === "see") {
+      onClose();
+      return;
+    }
+    try {
+      const values = await form.validateFields();
+      const params = {
+        title: values.formTitle,
+        url: values.formUrl,
+        icon: values.formIcon,
+        parent: Number(treeSelect.id) || null,
+        sorts: values.formSorts,
+        desc: values.formDesc,
+        conditions: values.formConditions,
+      };
+      setModal((prevState) => ({
+        ...prevState,
+        modalLoading: true,
+      }));
+      if (modal.operateType === "add") {
+        try {
+          const res = await dispatch.sys.addMenu(params);
+          if (res && res.status === 200) {
+            message.success("添加成功");
+            getData();
+            onClose();
+            dispatch.app.updateUserInfo(null);
+          } else {
+            message.error("添加失败");
+          }
+        } finally {
+          setModal((prevState) => ({
+            ...prevState,
+            modalLoading: false,
+          }));
+        }
+      } else {
+        try {
+          params.id = modal?.nowData?.id;
+          const res = await dispatch.sys.upMenu(params);
+          if (res && res.status === 200) {
+            message.success("修改成功");
+            getData();
+            onClose();
+            dispatch.app.updateUserInfo(null);
+          } else {
+            message.error("修改失败");
+          }
+        } finally {
+          setModal((prevState) => ({
+            ...prevState,
+            modalLoading: false,
+          }));
+        }
+      }
+    } catch {
+    }
+  };
+
+  const onDel = async (record) => {
+    const params = { id: record.id };
+    const res = await dispatch.sys.delMenu(params);
+    if (res && res.status === 200) {
+      getData();
+      dispatch.app.updateUserInfo(null);
+      message.success("删除成功");
+    } else {
+      message.error(res?.message ?? "操作失败");
+    }
   };
 
   const sourceData = useMemo(() => {

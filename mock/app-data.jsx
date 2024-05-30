@@ -128,7 +128,7 @@ let powers = [
     menu: 3,
     title: "新增",
     code: "user:add",
-    desc: "用户管理 - 添加权限",
+    desc: "用户添加权限",
     sorts: 1,
     conditions: 1,
   },
@@ -137,7 +137,7 @@ let powers = [
     menu: 3,
     title: "修改",
     code: "user:up",
-    desc: "用户管理 - 修改权限",
+    desc: "用户修改权限",
     sorts: 2,
     conditions: 1,
   },
@@ -146,7 +146,7 @@ let powers = [
     menu: 3,
     title: "查看",
     code: "user:query",
-    desc: "用户管理 - 查看权限",
+    desc: "用户查看权限",
     sorts: 3,
     conditions: 1,
   },
@@ -155,7 +155,7 @@ let powers = [
     menu: 3,
     title: "删除",
     code: "user:del",
-    desc: "用户管理 - 删除权限",
+    desc: "用户删除权限",
     sorts: 4,
     conditions: 1,
   },
@@ -164,7 +164,7 @@ let powers = [
     menu: 3,
     title: "分配角色",
     code: "user:role",
-    desc: "用户管理 - 分配角色权限",
+    desc: "用户分配角色权限",
     sorts: 5,
     conditions: 1,
   },
@@ -174,7 +174,7 @@ let powers = [
     menu: 4,
     title: "新增",
     code: "role:add",
-    desc: "角色管理 - 添加权限",
+    desc: "角色添加权限",
     sorts: 1,
     conditions: 1,
   },
@@ -183,7 +183,7 @@ let powers = [
     menu: 4,
     title: "修改",
     code: "role:up",
-    desc: "角色管理 - 修改权限",
+    desc: "角色修改权限",
     sorts: 2,
     conditions: 1,
   },
@@ -192,7 +192,7 @@ let powers = [
     menu: 4,
     title: "查看",
     code: "role:query",
-    desc: "角色管理 - 查看权限",
+    desc: "角色查看权限",
     sorts: 3,
     conditions: 1,
   },
@@ -201,7 +201,7 @@ let powers = [
     menu: 4,
     title: "分配权限",
     code: "role:power",
-    desc: "角色管理 - 分配权限",
+    desc: "角色分配权限",
     sorts: 4,
     conditions: 1,
   },
@@ -210,54 +210,16 @@ let powers = [
     menu: 4,
     title: "删除",
     code: "role:del",
-    desc: "角色管理 - 删除权限",
+    desc: "角色删除权限",
     sorts: 5,
     conditions: 1,
   },
-
-  {
-    id: 10,
-    menu: 5,
-    title: "新增",
-    code: "power:add",
-    desc: "权限管理 - 添加权限",
-    sorts: 1,
-    conditions: 1,
-  },
-  {
-    id: 11,
-    menu: 5,
-    title: "修改",
-    code: "power:up",
-    desc: "权限管理 - 修改权限",
-    sorts: 2,
-    conditions: 1,
-  },
-  {
-    id: 12,
-    menu: 5,
-    title: "查看",
-    code: "power:query",
-    desc: "权限管理 - 查看权限",
-    sorts: 3,
-    conditions: 1,
-  },
-  {
-    id: 13,
-    menu: 5,
-    title: "删除",
-    code: "power:del",
-    desc: "权限管理 - 删除权限",
-    sorts: 2,
-    conditions: 1,
-  },
-
   {
     id: 14,
     menu: 6,
     title: "新增",
     code: "menu:add",
-    desc: "菜单管理 - 添加权限",
+    desc: "菜单添加权限",
     sorts: 1,
     conditions: 1,
   },
@@ -266,7 +228,7 @@ let powers = [
     menu: 6,
     title: "修改",
     code: "menu:up",
-    desc: "菜单管理 - 修改权限",
+    desc: "菜单修改权限",
     sorts: 2,
     conditions: 1,
   },
@@ -275,7 +237,7 @@ let powers = [
     menu: 6,
     title: "查看",
     code: "menu:query",
-    desc: "菜单管理 - 查看权限",
+    desc: "菜单查看权限",
     sorts: 3,
     conditions: 1,
   },
@@ -284,7 +246,7 @@ let powers = [
     menu: 6,
     title: "删除",
     code: "menu:del",
-    desc: "菜单管理 - 删除权限",
+    desc: "菜单删除权限",
     sorts: 2,
     conditions: 1,
   },
@@ -311,7 +273,7 @@ let roles = [
   {
     id: 2,
     title: "普通管理员",
-    desc: "仅可查看",
+    desc: "仅可查看敏感内容",
     sorts: 2,
     conditions: 1,
     menuAndPowers: [
@@ -463,6 +425,72 @@ const getPowerById = (p) => {
   return { status: 200, data: res, message: "success" };
 };
 
+const setPowersByRoleIds = (ps) => {
+  const roles = JSON.parse(localStorage.getItem("roles"));
+
+  ps.forEach((p) => {
+    const roleIndex = roles.findIndex((item) => item.id === p.id);
+    if (roleIndex !== -1) {
+      const pow = p.menus.map((item) => ({ menuId: item, powers: [] }));
+      p.powers.forEach((ppItem) => {
+        const powerData = powers.find((pItem) => pItem.id === ppItem);
+        if (powerData) {
+          const menuId = powerData.menu;
+          const powItem = pow.find((item) => item.menuId === menuId);
+          if (powItem) {
+            powItem.powers.push(ppItem);
+          }
+        }
+      });
+      roles[roleIndex].menuAndPowers = pow;
+    }
+  });
+
+  localStorage.setItem("roles", JSON.stringify(roles));
+  return { status: 200, data: null, message: "success" };
+};
+
+const getUserList = (p) => {
+  const users = JSON.parse(localStorage.getItem("users"));
+  const username = decode(p.username);
+  const conditions = Number(p.conditions);
+
+  const filteredUsers = users.filter((item) => {
+    return (!username || item.username.includes(username)) &&
+           (!conditions || item.conditions === conditions);
+  });
+
+  const pageNum = Number(p.pageNum);
+  const pageSize = Number(p.pageSize);
+  const paginatedUsers = filteredUsers.slice((pageNum - 1) * pageSize, pageNum * pageSize);
+
+  return {
+    status: 200,
+    data: { list: paginatedUsers, total: filteredUsers.length },
+    message: "success",
+  };
+};
+
+const addUser = (p) => {
+  p.id = ++id_sequence;
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  users.push(p);
+  localStorage.setItem("users", JSON.stringify(users));
+  return { status: 200, data: null, message: "success" };
+};
+
+const upUser = (p) => {
+  const users = JSON.parse(localStorage.getItem("users"));
+  const index = users.findIndex((item) => item.id === p.id);
+  if (index !== -1) {
+    users[index] = { ...users[index], ...p };
+    localStorage.setItem("users", JSON.stringify(users));
+    return { status: 200, data: null, message: "success" };
+  } else {
+    return { status: 204, data: null, message: "未找到该条数据" };
+  }
+};
+
 const addPower = (p) => {
   p.id = ++id_sequence;
   powers.push(p);
@@ -505,6 +533,46 @@ const getRoles = (p) => {
     data: { list: paginatedRoles, total: filteredRoles.length },
     message: "success",
   };
+};
+
+
+const setPowersByRoleId = (p) => {
+  const roles = JSON.parse(localStorage.getItem("roles"));
+  const roleIndex = roles.findIndex((item) => item.id === p.id);
+
+  if (roleIndex === -1) {
+    return { status: 204, data: null, message: "未找到该条数据" };
+  }
+
+  const pow = p.menus.map((item) => ({ menuId: item, powers: [] }));
+  p.powers.forEach((ppItem) => {
+    const powerData = powers.find((pItem) => pItem.id === ppItem);
+    if (powerData) {
+      const menuId = powerData.menu;
+      const powItem = pow.find((item) => item.menuId === menuId);
+      if (powItem) {
+        powItem.powers.push(ppItem);
+      }
+    }
+  });
+
+  roles[roleIndex].menuAndPowers = pow;
+  localStorage.setItem("roles", JSON.stringify(roles));
+  return { status: 200, data: null, message: "success" };
+};
+
+
+
+const delUser = (p) => {
+  const users = JSON.parse(localStorage.getItem("users"));
+  const index = users.findIndex((item) => item.id === p.id);
+  if (index !== -1) {
+    users.splice(index, 1);
+    localStorage.setItem("users", JSON.stringify(users));
+    return { status: 200, data: null, message: "success" };
+  } else {
+    return { status: 204, data: null, message: "未找到该条数据" };
+  }
 };
 
 const getAllRoles = (p) => ({
@@ -577,109 +645,6 @@ const getAllMenusAndPowers = (p) => {
     return { ...item, powers: powersList };
   });
   return { status: 200, data: res, message: "success" };
-};
-
-const setPowersByRoleId = (p) => {
-  const roles = JSON.parse(localStorage.getItem("roles"));
-  const roleIndex = roles.findIndex((item) => item.id === p.id);
-
-  if (roleIndex === -1) {
-    return { status: 204, data: null, message: "未找到该条数据" };
-  }
-
-  const pow = p.menus.map((item) => ({ menuId: item, powers: [] }));
-  p.powers.forEach((ppItem) => {
-    const powerData = powers.find((pItem) => pItem.id === ppItem);
-    if (powerData) {
-      const menuId = powerData.menu;
-      const powItem = pow.find((item) => item.menuId === menuId);
-      if (powItem) {
-        powItem.powers.push(ppItem);
-      }
-    }
-  });
-
-  roles[roleIndex].menuAndPowers = pow;
-  localStorage.setItem("roles", JSON.stringify(roles));
-  return { status: 200, data: null, message: "success" };
-};
-
-const setPowersByRoleIds = (ps) => {
-  const roles = JSON.parse(localStorage.getItem("roles"));
-
-  ps.forEach((p) => {
-    const roleIndex = roles.findIndex((item) => item.id === p.id);
-    if (roleIndex !== -1) {
-      const pow = p.menus.map((item) => ({ menuId: item, powers: [] }));
-      p.powers.forEach((ppItem) => {
-        const powerData = powers.find((pItem) => pItem.id === ppItem);
-        if (powerData) {
-          const menuId = powerData.menu;
-          const powItem = pow.find((item) => item.menuId === menuId);
-          if (powItem) {
-            powItem.powers.push(ppItem);
-          }
-        }
-      });
-      roles[roleIndex].menuAndPowers = pow;
-    }
-  });
-
-  localStorage.setItem("roles", JSON.stringify(roles));
-  return { status: 200, data: null, message: "success" };
-};
-
-const getUserList = (p) => {
-  const users = JSON.parse(localStorage.getItem("users"));
-  const username = decode(p.username);
-  const conditions = Number(p.conditions);
-
-  const filteredUsers = users.filter((item) => {
-    return (!username || item.username.includes(username)) &&
-           (!conditions || item.conditions === conditions);
-  });
-
-  const pageNum = Number(p.pageNum);
-  const pageSize = Number(p.pageSize);
-  const paginatedUsers = filteredUsers.slice((pageNum - 1) * pageSize, pageNum * pageSize);
-
-  return {
-    status: 200,
-    data: { list: paginatedUsers, total: filteredUsers.length },
-    message: "success",
-  };
-};
-
-const addUser = (p) => {
-  p.id = ++id_sequence;
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-  users.push(p);
-  localStorage.setItem("users", JSON.stringify(users));
-  return { status: 200, data: null, message: "success" };
-};
-
-const upUser = (p) => {
-  const users = JSON.parse(localStorage.getItem("users"));
-  const index = users.findIndex((item) => item.id === p.id);
-  if (index !== -1) {
-    users[index] = { ...users[index], ...p };
-    localStorage.setItem("users", JSON.stringify(users));
-    return { status: 200, data: null, message: "success" };
-  } else {
-    return { status: 204, data: null, message: "未找到该条数据" };
-  }
-};
-
-const delUser = (p) => {
-  const users = JSON.parse(localStorage.getItem("users"));
-  const index = users.findIndex((item) => item.id === p.id);
-  if (index !== -1) {
-    users.splice(index, 1);
-    localStorage.setItem("users", JSON.stringify(users));
-    return { status: 200, data: null, message: "success" };
-  } else {
-    return { status: 204, data: null, message: "未找到该条数据" };
-  }
 };
 
 export default function (obj) {
