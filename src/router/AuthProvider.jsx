@@ -4,35 +4,45 @@ import { Navigate, useLocation } from 'react-router-dom';
 import tools from '@/util/tools';
 
 const AuthNoLogin = ({ children }) => {
-  const userinfo = useSelector((state) => state.app.userinfo);
-  if (!userinfo?.userBasicInfo) {
+  const userInfo = useSelector((state) => state.app.userinfo);
+  
+  if (!userInfo?.userBasicInfo) {
     return <Navigate to="/user/login" replace />;
   }
+
   return children;
 };
 
 const AuthWithLogin = ({ children }) => {
-  const userinfo = useSelector((state) => state.app.userinfo);
-  if (userinfo?.userBasicInfo) {
+  const userInfo = useSelector((state) => state.app.userinfo);
+  
+  if (userInfo?.userBasicInfo) {
     return <Navigate to="/home" replace />;
   }
+
   return children;
 };
 
 const AuthNoPower = ({ children }) => {
   const location = useLocation();
-  const userinfo = useSelector((state) => state.app.userinfo);
+  const userInfo = useSelector((state) => state.app.userinfo);
   
-  const isHavePower = useMemo(() => {
-    const sessionUserinfo = sessionStorage.getItem("userinfo");
-    const menus = userinfo.menus?.length ? userinfo.menus : (sessionUserinfo ? JSON.parse(tools.uncompile(sessionUserinfo)).menus : []);
+  const hasPower = useMemo(() => {
+    const sessionUserInfo = sessionStorage.getItem("userinfo");
+    const menus = userInfo.menus?.length 
+      ? userInfo.menus 
+      : sessionUserInfo 
+        ? JSON.parse(tools.uncompile(sessionUserInfo)).menus 
+        : [];
     const menuUrls = menus.map((item) => item.url);
+    
     return menuUrls.includes(location.pathname);
-  }, [userinfo, location.pathname]);
+  }, [userInfo, location.pathname]);
 
-  if (!isHavePower && location.pathname !== "/401") {
+  if (!hasPower && location.pathname !== "/401") {
     return <Navigate to="/401" replace />;
   }
+
   return children;
 };
 

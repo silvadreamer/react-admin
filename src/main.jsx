@@ -6,8 +6,8 @@ import store from "./store";
 import Router from "./router";
 
 import "normalize.css";
-import "@/assets/styles/default.less";
-import "@/assets/styles/global.less";
+import "@/assets/styles/default.css";
+import "@/assets/styles/global.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
