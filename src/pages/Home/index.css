@@ -1,4 +1,4 @@
-.page-home {
+.page {
   padding-top: 50px;
   height: 100%;
   display: flex;
@@ -8,7 +8,7 @@
   color: #e5e7eb;
 }
 
-.page-home .box {
+.page .box {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
@@ -19,6 +19,6 @@
   transition: transform 0.3s;
 }
 
-.page-home .box:hover {
+.page .box:hover {
   transform: scale(1.05);
 }

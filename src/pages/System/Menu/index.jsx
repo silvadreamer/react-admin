@@ -339,7 +339,7 @@ function MenuAdminContainer() {
   }, [data, treeSelect.id]);
 
   return (
-    <div className="page-menu-admin">
+    <div className="menu-admin">
       <div className="l">
         <div className="title">目录略缩</div>
         <div>

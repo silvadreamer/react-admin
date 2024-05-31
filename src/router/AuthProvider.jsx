@@ -22,7 +22,6 @@ const AuthWithLogin = ({ children }) => {
 const AuthNoPower = ({ children }) => {
   const location = useLocation();
   const userinfo = useSelector((state) => state.app.userinfo);
-  
   const isHavePower = useMemo(() => {
     const sessionUserinfo = sessionStorage.getItem("userinfo");
     const menus = userinfo.menus?.length ? userinfo.menus : (sessionUserinfo ? JSON.parse(tools.uncompile(sessionUserinfo)).menus : []);
