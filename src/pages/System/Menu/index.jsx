@@ -22,8 +22,6 @@ import {
 } from "@ant-design/icons";
 import { cloneDeep } from "lodash";
 
-import { IconsData } from "@/util/json";
-import Icon from "@/components/Icon";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -151,14 +149,6 @@ function MenuAdminContainer() {
       title: "序号",
       dataIndex: "serial",
       key: "serial",
-    },
-    {
-      title: "图标",
-      dataIndex: "icon",
-      key: "icon",
-      render: (v) => {
-        return v ? <Icon type={v} /> : "";
-      },
     },
     {
       title: "名称",
@@ -354,8 +344,7 @@ function MenuAdminContainer() {
                 type="dashed"
                 icon={<PlusCircleOutlined />}
                 onClick={() => onModalShow(null, "add")}
-                disabled={!p.includes("menu:add")}
-              >
+                disabled={!p.includes("menu:add")}>
                 {`添加${treeSelect.title || ""}子菜单`}
               </Button>
             </li>
@@ -401,18 +390,6 @@ function MenuAdminContainer() {
               placeholder="请输入菜单url"
               disabled={modal.operateType === "see"}
             />
-          </Form.Item>
-          <Form.Item label="菜单图标" name="formIcon" {...formItemLayout}>
-            <Select
-              dropdownClassName="iconSelect"
-              disabled={modal.operateType === "see"}
-            >
-              {IconsData.map((item, index) => (
-                <Option key={index} value={item}>
-                  <Icon type={item} />
-                </Option>
-              ))}
-            </Select>
           </Form.Item>
           <Form.Item
             label="功能描述"

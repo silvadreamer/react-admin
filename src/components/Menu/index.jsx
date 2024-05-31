@@ -6,7 +6,6 @@ import { cloneDeep } from "lodash";
 const { Sider } = Layout;
 
 import "./index.css";
-import Icon from "@/components/Icon";
 import PropTypes from 'prop-types';
 
 export default function MenuCom(props) {
@@ -46,31 +45,20 @@ export default function MenuCom(props) {
       if (item.children) {
         return {
           key: item.url,
-          label:
-            !item.parent && item.icon ? (
-              <span>
-                <Icon type={item.icon} />
-                <span>{item.title}</span>
-              </span>
-            ) : (
-              item.title
-            ),
+          label: (
+            <span>{item.title}</span>
+          ),
           children: makeTreeDom(item.children),
         };
       } else {
         return {
-          label: (
-            <>
-              {!item.parent && item.icon ? <Icon type={item.icon} /> : null}
-              <span>{item.title}</span>
-            </>
-          ),
+          label: <span>{item.title}</span>,
           key: item.url,
         };
       }
     });
   }, []);
-
+  
   const treeDom = useMemo(() => {
     const d = cloneDeep(props.data);
     d.sort((a, b) => {
@@ -84,7 +72,7 @@ export default function MenuCom(props) {
   return (
     <Sider
       width={256}
-      className="sider"
+      className={`sider ${props.collapsed ? "collapsed" : ""}`}
       trigger={null}
       collapsible
       collapsed={props.collapsed}

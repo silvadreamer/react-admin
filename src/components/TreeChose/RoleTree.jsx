@@ -14,7 +14,6 @@ export default function RoleTreeComponent(props) {
     (one, data) => {
       let kids;
       if (!one) {
-        // 第1次递归
         kids = data.filter((item) => !item.parent);
       } else {
         kids = data.filter((item) => item.parent?.id === one.id);

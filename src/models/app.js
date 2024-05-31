@@ -39,7 +39,7 @@ export default {
         const res = await axios.post("/api/login", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
+
       }
       return;
     },
@@ -50,7 +50,7 @@ export default {
         sessionStorage.removeItem("userinfo");
         return "success";
       } catch (err) {
-        message.error("网络错误，请重试");
+
       }
       return;
     },

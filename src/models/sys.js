@@ -1,6 +1,5 @@
 import axios from "@/util/axios";
 import qs from "qs";
-import { message } from "antd";
 
 const defaultState = {
   menus: [],
@@ -31,7 +30,6 @@ export default {
         }
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -41,7 +39,6 @@ export default {
         const res = await axios.post(`/api/getMenusById`, params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -51,7 +48,6 @@ export default {
         const res = await axios.post("/api/addmenu", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -61,7 +57,6 @@ export default {
         const res = await axios.post("/api/upmenu", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -71,7 +66,6 @@ export default {
         const res = await axios.post("/api/delmenu", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -83,7 +77,6 @@ export default {
         );
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -93,7 +86,6 @@ export default {
         const res = await axios.post(`/api/getPowerById`, params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -106,7 +98,6 @@ export default {
         }
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -116,7 +107,6 @@ export default {
         const res = await axios.post("/api/addpower", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -126,7 +116,6 @@ export default {
         const res = await axios.post("/api/uppower", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -136,7 +125,6 @@ export default {
         const res = await axios.post("/api/delpower", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -148,7 +136,6 @@ export default {
         );
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -158,7 +145,6 @@ export default {
         const res = await axios.post(`/api/getRoleById`, params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -168,7 +154,6 @@ export default {
         const res = await axios.post("/api/addrole", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -178,7 +163,6 @@ export default {
         const res = await axios.post("/api/uprole", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -188,7 +172,6 @@ export default {
         const res = await axios.post("/api/delrole", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -200,7 +183,6 @@ export default {
         );
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -213,7 +195,6 @@ export default {
         }
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -223,7 +204,6 @@ export default {
         const res = await axios.post("/api/setPowersByRoleId", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -233,7 +213,6 @@ export default {
         const res = await axios.post("/api/setPowersByRoleIds", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -245,7 +224,6 @@ export default {
         );
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -255,7 +233,6 @@ export default {
         const res = await axios.post("/api/addUser", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -265,7 +242,6 @@ export default {
         const res = await axios.post("/api/upUser", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -275,7 +251,6 @@ export default {
         const res = await axios.post("/api/delUser", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },
@@ -285,7 +260,6 @@ export default {
         const res = await axios.post("/api/upUser", params);
         return res;
       } catch (err) {
-        message.error("网络错误，请重试");
       }
       return;
     },

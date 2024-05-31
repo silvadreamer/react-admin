@@ -28,15 +28,6 @@ let users = [
     conditions: 1,
     roles: [2],
   },
-  {
-    id: 4,
-    username: "user",
-    password: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
-    email: "user4@bjtu.edu.com",
-    desc: "普通管理员4",
-    conditions: 1,
-    roles: [2],
-  },
 ];
 
 let powers = [
@@ -173,7 +164,6 @@ let menus = [
   {
     id: 1,
     title: "首页",
-    icon: "icon-home",
     url: "/home",
     parent: null,
     desc: "首页",
@@ -183,7 +173,6 @@ let menus = [
   {
     id: 2,
     title: "商品",
-    icon: "icon-goods",
     url: "/goods",
     parent: null,
     desc: "商品目录分支",
@@ -193,7 +182,6 @@ let menus = [
   {
     id: 3,
     title: "订单",
-    icon: "icon-order",
     url: "/order",
     parent: null,
     desc: "订单目录分支",
@@ -203,7 +191,6 @@ let menus = [
   {
     id: 4,
     title: "营销",
-    icon: "icon-marketing",
     url: "/marketing",
     parent: null,
     desc: "营销目录分支",
@@ -213,7 +200,6 @@ let menus = [
   {
     id: 5,
     title: "系统管理",
-    icon: "icon-setting",
     url: "/system",
     parent: null,
     desc: "系统管理目录分支",
@@ -223,7 +209,6 @@ let menus = [
   {
     id: 6,
     title: "用户管理",
-    icon: "icon-user",
     url: "/system/useradmin",
     parent: 5,
     desc: "系统管理/用户管理",
@@ -233,7 +218,6 @@ let menus = [
   {
     id: 7,
     title: "角色管理",
-    icon: "icon-team",
     url: "/system/roleadmin",
     parent: 5,
     desc: "系统管理/角色管理",
@@ -243,7 +227,6 @@ let menus = [
   {
     id: 8,
     title: "菜单管理",
-    icon: "icon-appstore",
     url: "/system/menuadmin",
     parent: 5,
     desc: "系统管理/菜单管理",
