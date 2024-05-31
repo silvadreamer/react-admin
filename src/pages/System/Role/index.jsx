@@ -83,9 +83,8 @@ function RoleAdminContainer() {
     }));
   
     try {
-      const res = actionType === "add"
-        ? await dispatch.sys.addRole(params)
-        : await dispatch.sys.upRole(params);
+      const action = actionType === "add" ? dispatch.sys.addRole : dispatch.sys.upRole;
+      const res = await action(params);
   
       if (res?.status === 200) {
         message.success(actionType === "add" ? "添加成功" : "修改成功");
@@ -95,6 +94,8 @@ function RoleAdminContainer() {
       } else {
         message.error(res?.message ?? (actionType === "add" ? "添加失败" : "修改失败"));
       }
+    } catch (error) {
+      message.error(`操作失败: ${error.message}`);
     } finally {
       setModal((prevState) => ({
         ...prevState,
@@ -274,6 +275,72 @@ function RoleAdminContainer() {
     }
   };
   
+  const renderStatus = (v) => (
+    v === 1 ? (
+      <span style={{ color: "blue" }}>启用中</span>
+    ) : (
+      <span style={{ color: "yellow" }}>禁用中</span>
+    )
+  );
+  
+  const renderControls = (record) => {
+    const controls = [];
+  
+    if (p.includes("role:up")) {
+      controls.push(
+        <span
+          key="1"
+          className="control-btn blue"
+          onClick={() => onModalShow(record, "up")}
+        >
+          <Tooltip placement="top" title="修改">
+            <ToolOutlined />
+          </Tooltip>
+        </span>
+      );
+    }
+  
+    if (p.includes("role:power")) {
+      controls.push(
+        <span
+          key="2"
+          className="control-btn blue"
+          onClick={() => onAllotPowerClick(record)}
+        >
+          <Tooltip placement="top" title="分配权限">
+            <EditOutlined />
+          </Tooltip>
+        </span>
+      );
+    }
+  
+    if (p.includes("role:del")) {
+      controls.push(
+        <Popconfirm
+          key="3"
+          title="确定删除吗?"
+          onConfirm={() => onDel(record.id)}
+          okText="确定"
+          cancelText="取消"
+        >
+          <span className="control-btn red">
+            <Tooltip placement="top" title="删除">
+              <DeleteOutlined />
+            </Tooltip>
+          </span>
+        </Popconfirm>
+      );
+    }
+  
+    return controls.reduce((acc, item, index) => {
+      if (index) {
+        acc.push(<Divider key={`line${index}`} type="vertical" />);
+      }
+      acc.push(item);
+      return acc;
+    }, []);
+  };
+  
   const tableColumns = [
     {
       title: "序号",
@@ -299,71 +366,16 @@ function RoleAdminContainer() {
       title: "是否启用",
       dataIndex: "conditions",
       key: "conditions",
-      render: (v) =>
-        v === 1 ? (
-          <span style={{ color: "blue" }}>启用中</span>
-        ) : (
-          <span style={{ color: "yellow" }}>禁用中</span>
-        ),
+      render: renderStatus,
     },
     {
       title: "操作",
       key: "control",
       width: 200,
-      render: (v, record) => {
-        const controls = [];
-        p.includes("role:up") &&
-          controls.push(
-            <span
-              key="1"
-              className="control-btn blue"
-              onClick={() => onModalShow(record, "up")}
-            >
-              <Tooltip placement="top" title="修改">
-                <ToolOutlined />
-              </Tooltip>
-            </span>
-          );
-        p.includes("role:power") &&
-          controls.push(
-            <span
-              key="2"
-              className="control-btn blue"
-              onClick={() => onAllotPowerClick(record)}
-            >
-              <Tooltip placement="top" title="分配权限">
-                <EditOutlined />
-              </Tooltip>
-            </span>
-          );
-        p.includes("role:del") &&
-          controls.push(
-            <Popconfirm
-              key="3"
-              title="确定删除吗?"
-              onConfirm={() => onDel(record.id)}
-              okText="确定"
-              cancelText="取消"
-            >
-              <span className="control-btn red">
-                <Tooltip placement="top" title="删除">
-                  <DeleteOutlined />
-                </Tooltip>
-              </span>
-            </Popconfirm>
-          );
-
-        const result = [];
-        controls.forEach((item, index) => {
-          if (index) {
-            result.push(<Divider key={`line${index}`} type="vertical" />);
-          }
-          result.push(item);
-        });
-        return result;
-      },
+      render: (v, record) => renderControls(record),
     },
   ];
+  
 
   const tableData = useMemo(() => {
     return data.map((item, index) => {

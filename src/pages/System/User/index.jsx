@@ -93,7 +93,7 @@ function UserAdminContainer() {
     }
   };
   
-  async function onGetData({ pageNum, pageSize }) {
+  const onGetData = async ({ pageNum, pageSize }) => {
     if (!p.includes("user:query")) {
       return;
     }
@@ -118,16 +118,21 @@ function UserAdminContainer() {
       } else {
         message.error(res?.message ?? "数据获取失败");
       }
+    } catch (error) {
+      message.error("数据获取失败");
+      console.error("数据获取失败:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
+  
   
   const searchUsernameChange = (e) => {
-    if ( e.target.value.length < 20 ) {
-      setSearchInfo((prevState) => ({ ...prevState, username: e.target.value }));
+    const { value } = e.target;
+    if (value.length < 20) {
+      setSearchInfo((prevState) => ({ ...prevState, username: value }));
     }
-  };
+  };  
   
   const onSearch = () => {
     onGetData(page);
@@ -155,9 +160,8 @@ function UserAdminContainer() {
     }));
   
     try {
-      const res = actionType === "add"
-        ? await dispatch.sys.addUser(params)
-        : await dispatch.sys.upUser(params);
+      const action = actionType === "add" ? dispatch.sys.addUser : dispatch.sys.upUser;
+      const res = await action(params);
   
       if (res?.status === 200) {
         message.success(actionType === "add" ? "添加成功" : "修改成功");
@@ -167,7 +171,7 @@ function UserAdminContainer() {
         message.error(res?.message ?? (actionType === "add" ? "添加失败" : "修改失败"));
       }
     } catch (error) {
-      console.error(error);
+      console.error(`${actionType === "add" ? "添加失败" : "修改失败"}:`, error);
       message.error(actionType === "add" ? "添加失败" : "修改失败");
     } finally {
       setModal((prevState) => ({
@@ -175,7 +179,7 @@ function UserAdminContainer() {
         modalLoading: false,
       }));
     }
-  };
+  };  
 
   const handleResponse = async (apiCall, successMessage, errorMessage) => {
     try {
@@ -300,6 +304,72 @@ function UserAdminContainer() {
   };
 
 
+  const renderStatus = (v) =>
+    v === 1 ? (
+      <span style={{ color: "blue" }}>账号有效</span>
+    ) : (
+      <span style={{ color: "yellow" }}>账号禁用中</span>
+    );
+  
+  const renderControls = (record) => {
+    const controls = [];
+    const u = userinfo.userBasicInfo || { id: -1 };
+  
+    if (p.includes("user:up")) {
+      controls.push(
+        <span
+          key="1"
+          className="control-btn blue"
+          onClick={() => onModalShow(record, "up")}
+        >
+          <Tooltip placement="top" title="修改">
+            <ToolOutlined />
+          </Tooltip>
+        </span>
+      );
+    }
+  
+    if (p.includes("user:role")) {
+      controls.push(
+        <span
+          key="2"
+          className="control-btn blue"
+          onClick={() => onTreeShowClick(record)}
+        >
+          <Tooltip placement="top" title="分配角色">
+            <EditOutlined />
+          </Tooltip>
+        </span>
+      );
+    }
+  
+    if (p.includes("user:del") && u.id !== record.id) {
+      controls.push(
+        <Popconfirm
+          key="3"
+          title="确定删除吗?"
+          onConfirm={() => onDel(record.id)}
+          okText="确定"
+          cancelText="取消"
+        >
+          <span className="control-btn red">
+            <Tooltip placement="top" title="删除">
+              <DeleteOutlined />
+            </Tooltip>
+          </span>
+        </Popconfirm>
+      );
+    }
+  
+    return controls.reduce((acc, item, index) => {
+      if (index) {
+        acc.push(<Divider key={`line${index}`} type="vertical" />);
+      }
+      acc.push(item);
+      return acc;
+    }, []);
+  };
+  
   const tableColumns = [
     {
       title: "序号",
@@ -320,74 +390,16 @@ function UserAdminContainer() {
       title: "状态",
       dataIndex: "conditions",
       key: "conditions",
-      render: (v) =>
-        v === 1 ? (
-          <span style={{ color: "blue" }}>账号有效</span>
-        ) : (
-          <span style={{ color: "yellow" }}>账号禁用中</span>
-        ),
+      render: renderStatus,
     },
     {
       title: "操作",
       key: "control",
       width: 200,
-      render: (v, record) => {
-        const controls = [];
-        const u = userinfo.userBasicInfo || { id: -1 };
-        p.includes("user:up") &&
-          controls.push(
-            <span
-              key="1"
-              className="control-btn blue"
-              onClick={() => onModalShow(record, "up")}
-            >
-              <Tooltip placement="top" title="修改">
-                <ToolOutlined />
-              </Tooltip>
-            </span>
-          );
-        p.includes("user:role") &&
-          controls.push(
-            <span
-              key="2"
-              className="control-btn blue"
-              onClick={() => onTreeShowClick(record)}
-            >
-              <Tooltip placement="top" title="分配角色">
-                <EditOutlined />
-              </Tooltip>
-            </span>
-          );
-
-        p.includes("user:del") &&
-          u.id !== record.id &&
-          controls.push(
-            <Popconfirm
-              key="3"
-              title="确定删除吗?"
-              onConfirm={() => onDel(record.id)}
-              okText="确定"
-              cancelText="取消"
-            >
-              <span className="control-btn red">
-                <Tooltip placement="top" title="删除">
-                  <DeleteOutlined />
-                </Tooltip>
-              </span>
-            </Popconfirm>
-          );
-
-        const result = [];
-        controls.forEach((item, index) => {
-          if (index) {
-            result.push(<Divider key={`line${index}`} type="vertical" />);
-          }
-          result.push(item);
-        });
-        return result;
-      },
+      render: (v, record) => renderControls(record),
     },
   ];
+  
 
   const tableData = useMemo(() => {
     return data.map((item, index) => {

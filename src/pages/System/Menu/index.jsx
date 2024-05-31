@@ -76,43 +76,32 @@ function MenuAdminContainer() {
   };
 
   const dataToJson = useCallback((one, data) => {
-    let kids;
-    if (!one) {
-      kids = data.filter((item) => !item.parent);
-    } else {
-      kids = data.filter((item) => item.parent === one.id);
-    }
-    kids.forEach((item) => (item.children = dataToJson(item, data)));
-    return kids.length ? kids : undefined;
+    const children = data.filter(item => (one ? item.parent === one.id : !item.parent));
+    return children.map(item => ({
+      ...item,
+      children: dataToJson(item, data),
+    })).filter(item => item.children !== undefined);
   }, []);
+  
 
   const makeKey = useCallback((data) => {
-    const newData = [];
-    for (let i = 0; i < data.length; i++) {
-      const item = { ...data[i] };
-      if (item.children) {
-        item.children = makeKey(item.children);
+    return data.map(item => {
+      const newItem = { ...item, key: item.id };
+      if (newItem.children) {
+        newItem.children = makeKey(newItem.children);
       }
-      const treeItem = {
-        ...item,
-        key: item.id,
-      };
-      newData.push(treeItem);
-    }
-    return newData;
+      return newItem;
+    });
   }, []);
-
+  
   const onTreeSelect = useCallback(
     (keys, info) => {
-      let treeSelect = {};
-      if (info.selected) {
-        treeSelect = { title: info.node.title, id: info.node.id };
-      }
+      const treeSelect = info.selected ? { title: info.node.title, id: info.node.id } : {};
       setTreeSelect(treeSelect);
     },
     []
   );
-
+  
   const onModalShow = (data, type) => {
     setModal({
       modalShow: true,
@@ -144,92 +133,103 @@ function MenuAdminContainer() {
     });
   };
 
-  const tableColumns = [
-    {
-      title: "序号",
-      dataIndex: "serial",
-      key: "serial",
-    },
-    {
-      title: "名称",
-      dataIndex: "title",
-      key: "title",
-    },
-    {
-      title: "路径",
-      dataIndex: "url",
-      key: "url",
-      render: (v) => {
-        return v ? `/${v.replace(/^\//, "")}` : "";
-      },
-    },
-    {
-      title: "菜单详情",
-      dataIndex: "desc",
-      key: "desc",
-    },
-    {
-      title: "是否启用",
-      dataIndex: "conditions",
-      key: "conditions",
-      render: (v) =>
-        v === 1 ? (
-          <span style={{ color: "blue" }}>启用中</span>
-        ) : (
-          <span style={{ color: "yellow" }}>禁用中</span>
-        ),
-    },
-    {
-      title: "编辑操作",
-      key: "control",
-      width: 120,
-      render: (v, record) => {
-        const controls = [];
-        p.includes("menu:up") &&
-          controls.push(
-            <span
-              key="1"
-              className="control-btn blue"
-              onClick={() => onModalShow(record, "up")}
-            >
-              <Tooltip placement="top" title="修改">
-                <ToolOutlined />
-              </Tooltip>
-            </span>
-          );
-        p.includes("menu:del") &&
-          controls.push(
-            <Popconfirm
-              key="2"
-              title="确定删除吗?"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => onDel(record)}
-            >
-              <span className="control-btn red">
-                <Tooltip placement="top" title="删除">
-                  <DeleteOutlined />
-                </Tooltip>
-              </span>
-            </Popconfirm>
-          );
-        const result = [];
-        controls.forEach((item, index) => {
-          if (index) {
-            result.push(<Divider key={`line${index}`} type="vertical" />);
-          }
-          result.push(item);
-        });
-        return result;
-      },
-    },
-  ];
+  const renderUrl = (v) => (v ? `/${v.replace(/^\//, "")}` : "");
+
+const renderStatus = (v) => (
+  v === 1 ? (
+    <span style={{ color: "blue" }}>启用中</span>
+  ) : (
+    <span style={{ color: "yellow" }}>禁用中</span>
+  )
+);
+
+const renderControls = (record) => {
+  const controls = [];
+
+  if (p.includes("menu:up")) {
+    controls.push(
+      <span
+        key="1"
+        className="control-btn blue"
+        onClick={() => onModalShow(record, "up")}
+      >
+        <Tooltip placement="top" title="修改">
+          <ToolOutlined />
+        </Tooltip>
+      </span>
+    );
+  }
+
+  if (p.includes("menu:del")) {
+    controls.push(
+      <Popconfirm
+        key="2"
+        title="确定删除吗?"
+        okText="确定"
+        cancelText="取消"
+        onConfirm={() => onDel(record)}
+      >
+        <span className="control-btn red">
+          <Tooltip placement="top" title="删除">
+            <DeleteOutlined />
+          </Tooltip>
+        </span>
+      </Popconfirm>
+    );
+  }
+
+  return controls.reduce((acc, item, index) => {
+    if (index) {
+      acc.push(<Divider key={`line${index}`} type="vertical" />);
+    }
+    acc.push(item);
+    return acc;
+  }, []);
+};
+
+const tableColumns = [
+  {
+    title: "序号",
+    dataIndex: "serial",
+    key: "serial",
+  },
+  {
+    title: "名称",
+    dataIndex: "title",
+    key: "title",
+  },
+  {
+    title: "路径",
+    dataIndex: "url",
+    key: "url",
+    render: renderUrl,
+  },
+  {
+    title: "菜单详情",
+    dataIndex: "desc",
+    key: "desc",
+  },
+  {
+    title: "是否启用",
+    dataIndex: "conditions",
+    key: "conditions",
+    render: renderStatus,
+  },
+  {
+    title: "编辑操作",
+    key: "control",
+    width: 120,
+    render: (v, record) => renderControls(record),
+  },
+];
+
 
   const onOk = async () => {
     if (modal.operateType === "see") {
       onClose();
       return;
     }
+  
     try {
       const values = await form.validateFields();
       const params = {
@@ -241,49 +241,49 @@ function MenuAdminContainer() {
         desc: values.formDesc,
         conditions: values.formConditions,
       };
+  
       setModal((prevState) => ({
         ...prevState,
         modalLoading: true,
       }));
+  
+      const handleResponse = async (action) => {
+        const res = await action(params);
+        if (res && res.status === 200) {
+          message.success(modal.operateType === "add" ? "添加成功" : "修改成功");
+          getData();
+          onClose();
+          dispatch.app.updateUserInfo(null);
+        } else {
+          message.error(modal.operateType === "add" ? "添加失败" : "修改失败");
+        }
+      };
+  
       if (modal.operateType === "add") {
-        try {
-          const res = await dispatch.sys.addMenu(params);
-          if (res && res.status === 200) {
-            message.success("添加成功");
-            getData();
-            onClose();
-            dispatch.app.updateUserInfo(null);
-          } else {
-            message.error("添加失败");
-          }
-        } finally {
-          setModal((prevState) => ({
-            ...prevState,
-            modalLoading: false,
-          }));
-        }
+        await handleResponse(dispatch.sys.addMenu);
       } else {
-        try {
-          params.id = modal?.nowData?.id;
-          const res = await dispatch.sys.upMenu(params);
-          if (res && res.status === 200) {
-            message.success("修改成功");
-            getData();
-            onClose();
-            dispatch.app.updateUserInfo(null);
-          } else {
-            message.error("修改失败");
-          }
-        } finally {
-          setModal((prevState) => ({
-            ...prevState,
-            modalLoading: false,
-          }));
-        }
+        params.id = modal?.nowData?.id;
+        await handleResponse(dispatch.sys.upMenu);
       }
-    } catch {
+    } catch (error) {
+      message.error("操作失败");
+    } finally {
+      setModal((prevState) => ({
+        ...prevState,
+        modalLoading: false,
+      }));
     }
   };
+  
+
+  const sourceData = useMemo(() => {
+    const menuData = cloneDeep(data);
+    const processedData = makeKey(menuData);
+  
+    processedData.sort((a, b) => a.sorts - b.sorts);
+  
+    return dataToJson(null, processedData) || [];
+  }, [data, dataToJson]);
 
   const onDel = async (record) => {
     const params = { id: record.id };
@@ -296,17 +296,6 @@ function MenuAdminContainer() {
       message.error(res?.message ?? "操作失败");
     }
   };
-
-  const sourceData = useMemo(() => {
-    const menuData = cloneDeep(data);
-    const d = makeKey(menuData);
-
-    d.sort((a, b) => {
-      return a.sorts - b.sorts;
-    });
-    return dataToJson(null, d) || [];
-  }, [data, dataToJson]);
-
 
   const tableData = useMemo(() => {
     return data
