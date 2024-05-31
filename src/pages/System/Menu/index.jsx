@@ -146,88 +146,6 @@ function MenuAdminContainer() {
     });
   };
 
-  const onOk = async () => {
-    if (modal.operateType === "see") {
-      onClose();
-      return;
-    }
-    try {
-      const values = await form.validateFields();
-      const params = {
-        title: values.formTitle,
-        url: values.formUrl,
-        icon: values.formIcon,
-        parent: Number(treeSelect.id) || null,
-        sorts: values.formSorts,
-        desc: values.formDesc,
-        conditions: values.formConditions,
-      };
-      setModal((prevState) => ({
-        ...prevState,
-        modalLoading: true,
-      }));
-      if (modal.operateType === "add") {
-        try {
-          const res = await dispatch.sys.addMenu(params);
-          if (res && res.status === 200) {
-            message.success("添加成功");
-            getData();
-            onClose();
-            dispatch.app.updateUserInfo(null);
-          } else {
-            message.error("添加失败");
-          }
-        } finally {
-          setModal((prevState) => ({
-            ...prevState,
-            modalLoading: false,
-          }));
-        }
-      } else {
-        try {
-          params.id = modal?.nowData?.id;
-          const res = await dispatch.sys.upMenu(params);
-          if (res && res.status === 200) {
-            message.success("修改成功");
-            getData();
-            onClose();
-            dispatch.app.updateUserInfo(null);
-          } else {
-            message.error("修改失败");
-          }
-        } finally {
-          setModal((prevState) => ({
-            ...prevState,
-            modalLoading: false,
-          }));
-        }
-      }
-    } catch {
-    }
-  };
-
-  const onDel = async (record) => {
-    const params = { id: record.id };
-    const res = await dispatch.sys.delMenu(params);
-    if (res && res.status === 200) {
-      getData();
-      dispatch.app.updateUserInfo(null);
-      message.success("删除成功");
-    } else {
-      message.error(res?.message ?? "操作失败");
-    }
-  };
-
-  const sourceData = useMemo(() => {
-    const menuData = cloneDeep(data);
-    const d = makeKey(menuData);
-
-    d.sort((a, b) => {
-      return a.sorts - b.sorts;
-    });
-    return dataToJson(null, d) || [];
-  }, [data, dataToJson]);
-
   const tableColumns = [
     {
       title: "序号",
@@ -316,6 +234,89 @@ function MenuAdminContainer() {
       },
     },
   ];
+
+  const onOk = async () => {
+    if (modal.operateType === "see") {
+      onClose();
+      return;
+    }
+    try {
+      const values = await form.validateFields();
+      const params = {
+        title: values.formTitle,
+        url: values.formUrl,
+        icon: values.formIcon,
+        parent: Number(treeSelect.id) || null,
+        sorts: values.formSorts,
+        desc: values.formDesc,
+        conditions: values.formConditions,
+      };
+      setModal((prevState) => ({
+        ...prevState,
+        modalLoading: true,
+      }));
+      if (modal.operateType === "add") {
+        try {
+          const res = await dispatch.sys.addMenu(params);
+          if (res && res.status === 200) {
+            message.success("添加成功");
+            getData();
+            onClose();
+            dispatch.app.updateUserInfo(null);
+          } else {
+            message.error("添加失败");
+          }
+        } finally {
+          setModal((prevState) => ({
+            ...prevState,
+            modalLoading: false,
+          }));
+        }
+      } else {
+        try {
+          params.id = modal?.nowData?.id;
+          const res = await dispatch.sys.upMenu(params);
+          if (res && res.status === 200) {
+            message.success("修改成功");
+            getData();
+            onClose();
+            dispatch.app.updateUserInfo(null);
+          } else {
+            message.error("修改失败");
+          }
+        } finally {
+          setModal((prevState) => ({
+            ...prevState,
+            modalLoading: false,
+          }));
+        }
+      }
+    } catch {
+    }
+  };
+
+  const onDel = async (record) => {
+    const params = { id: record.id };
+    const res = await dispatch.sys.delMenu(params);
+    if (res && res.status === 200) {
+      getData();
+      dispatch.app.updateUserInfo(null);
+      message.success("删除成功");
+    } else {
+      message.error(res?.message ?? "操作失败");
+    }
+  };
+
+  const sourceData = useMemo(() => {
+    const menuData = cloneDeep(data);
+    const d = makeKey(menuData);
+
+    d.sort((a, b) => {
+      return a.sorts - b.sorts;
+    });
+    return dataToJson(null, d) || [];
+  }, [data, dataToJson]);
+
 
   const tableData = useMemo(() => {
     return data

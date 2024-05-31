@@ -4,7 +4,6 @@ import { Layout, Tooltip, Dropdown } from "antd";
 import {
   MenuFoldOutlined,
   LogoutOutlined,
-  SmileOutlined,
 } from "@ant-design/icons";
 
 const { Header } = Layout;
@@ -49,7 +48,6 @@ export default function HeaderCom(props) {
             placement="bottomRight"
           >
             <div className="userhead all_center">
-              <SmileOutlined />
               <span className="username">{u.username}</span>
             </div>
           </Dropdown>

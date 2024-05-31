@@ -29,26 +29,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 40px;
-  font-size: 36px;
+  font-size: 30px;
   font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
-}
-
-.page-login .loginBox .title img {
-  height: 56px;
-  margin-right: 10px;
-}
-
-.page-login .loginBox .vcode {
-  float: right;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-}
-
-.page-login .loginBox .remember {
-  color: #fff;
+  color: #fff
 }
 
 .page-login .loginBox .submit-btn {

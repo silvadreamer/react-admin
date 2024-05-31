@@ -1,45 +1,5 @@
 const tools = {
-  pointX(str, x = 0) {
-    if (str === undefined || str === null) {
-      return str;
-    }
-    const temp = parseFloat(str);
-    if (isNaN(temp)) {
-      return str;
-    }
-    return temp.toFixed(x);
-  },
-
-  trim(str) {
-    return str.trim();
-  },
-
-  addMosaic(str) {
-    const s = String(str);
-    const length = s.length;
-    const howmuch = (() => {
-      const l = length - 2;
-      return l > 6 ? 6 : l;
-    })();
-    const start = Math.floor((length - howmuch) / 2);
-    return s
-      .split("")
-      .map((v, i) => (i >= start && i < start + howmuch ? "*" : v))
-      .join("");
-  },
-
-  checkStr(str) {
-    return str === "" || /^[\w]+$/.test(str);
-  },
-
-  checkNumber(str) {
-    return str === "" || /^\d*$/.test(str);
-  },
-
-  checkPhone(str) {
-    return /^1[34578]\d{9}$/.test(String(str));
-  },
-
+  //检查邮件
   checkEmail(str) {
     const rex = /^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*@[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+)*\.[a-z]{2,}$/;
     return rex.test(str);

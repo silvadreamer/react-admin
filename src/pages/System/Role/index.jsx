@@ -122,7 +122,7 @@ function RoleAdminContainer() {
         params.id = modal?.nowData?.id;
       }
   
-      handleRoleAction(params, modal.operateType);
+      await handleRoleAction(params, modal.operateType);
     } catch (error) {
       console.error(error);
     }
@@ -145,18 +145,56 @@ function RoleAdminContainer() {
   };
   
   const onClose = () => {
-    setModal({ modalShow: false });
-  };  
+    setModal((prevState) => ({
+      ...prevState,
+      modalShow: false,
+    }));
+  };
 
+  const searchTitleChange = (e) => {
+    if (e.target.value.length < 20) {
+      setSearchInfo((prevState) => ({ ...prevState, title: e.target.value }));
+    }
+  };
+  
+  const onSearch = () => {
+    getData(page);
+  };
+  
+  const onModalShow = (data, type) => {
+    setModal({
+      modalShow: true,
+      nowData: data,
+      operateType: type,
+    });
+  
+    setTimeout(() => {
+      if (type === "add") {
+        form.resetFields();
+      } else {
+        form.setFieldsValue({
+          formConditions: data?.conditions,
+          formDesc: data?.desc,
+          formSorts: data?.sorts,
+          formTitle: data?.title,
+        });
+      }
+    });
+  };
+  
   const onAllotPowerClick = (record) => {
     const menus = record.menuAndPowers.map((item) => item.menuId); 
     const powers = record.menuAndPowers.reduce((acc, item) => [...acc, ...item.powers], []);
     
-    setModal({ nowData: record });
-    setPower({
+    setModal((prevState) => ({
+      ...prevState,
+      nowData: record,
+    }));
+    setPower((prevState) => ({
+      ...prevState,
       powerTreeShow: true,
       powerTreeDefault: { menus, powers },
-    });
+    }));
   };
   
   const onPowerTreeOk = async (arr) => {
@@ -171,7 +209,7 @@ function RoleAdminContainer() {
       powers: arr.powers,
     };
   
-    setPower({ treeOnOkLoading: true });
+    setPower((prevState) => ({ ...prevState, treeOnOkLoading: true }));
     try {
       const res = await dispatch.sys.setPowersByRoleId(params);
       if (res?.status === 200) {
@@ -186,15 +224,16 @@ function RoleAdminContainer() {
       message.error("权限分配失败");
       console.error(error);
     } finally {
-      setPower({ treeOnOkLoading: false });
+      setPower((prevState) => ({ ...prevState, treeOnOkLoading: false }));
     }
   };
   
   const onPowerTreeClose = () => {
-    setPower({
+    setPower((prevState) => ({
+      ...prevState,
       powerTreeShow: false,
       treeOnOkLoading: false,
-    });
+    }));
   };
   
   const onTablePageChange = (pageNum, pageSize) => {
@@ -235,38 +274,6 @@ function RoleAdminContainer() {
     }
   };
   
-  const searchTitleChange = (e) => {
-    if (e.target.value.length < 20) {
-      setSearchInfo((prevState) => ({ ...prevState, title: e.target.value }));
-    }
-  };
-  
-  const onSearch = () => {
-    getData(page);
-  };
-  
-  const onModalShow = (data, type) => {
-    setModal({
-      modalShow: true,
-      nowData: data,
-      operateType: type,
-    });
-  
-    setTimeout(() => {
-      if (type === "add") {
-        form.resetFields();
-      } else {
-        form.setFieldsValue({
-          formConditions: data?.conditions,
-          formDesc: data?.desc,
-          formSorts: data?.sorts,
-          formTitle: data?.title,
-        });
-      }
-    });
-  };
-
-
   const tableColumns = [
     {
       title: "序号",

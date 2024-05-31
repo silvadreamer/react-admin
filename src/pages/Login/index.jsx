@@ -82,29 +82,6 @@ function LoginContainer() {
     [dispatch.sys, dispatch.app]
   );
 
-  const onSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      const encryptedPassword = await encryptPassword(values.password);
-      setLoading(true);
-      const res = await loginIn(values.username, encryptedPassword);
-      if (res && res.status === 200) {
-        message.success("登录成功");
-        sessionStorage.setItem(
-          "userinfo",
-          tools.compile(JSON.stringify(res.data))
-        );
-        await dispatch.app.setUserInfo(res.data);
-        navigate("/");
-      } else {
-        message.error(res?.message ?? "登录失败");
-        setLoading(false);
-      }
-    } catch (e) {
-      setLoading(false);
-    }
-  };
-
   const handleRegisterClick = () => {
     setModalOperateType("register");
     setModalVisible(true);
@@ -146,6 +123,29 @@ function LoginContainer() {
       form.resetFields();
     } catch (error) {
       console.log("Validate Failed:", error);
+    }
+  };
+
+  const onSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const encryptedPassword = await encryptPassword(values.password);
+      setLoading(true);
+      const res = await loginIn(values.username, encryptedPassword);
+      if (res && res.status === 200) {
+        message.success("登录成功");
+        sessionStorage.setItem(
+          "userinfo",
+          tools.compile(JSON.stringify(res.data))
+        );
+        await dispatch.app.setUserInfo(res.data);
+        navigate("/");
+      } else {
+        message.error(res?.message ?? "登录失败");
+        setLoading(false);
+      }
+    } catch (e) {
+      setLoading(false);
     }
   };
 

@@ -37,59 +37,71 @@ const [
   });
 });
 
-function RouterComponent() {
+function RouterCom() {
   const dispatch = useDispatch();
-  const userInfo = useSelector((state) => state.app.userinfo);
+  const userinfo = useSelector((state) => state.app.userinfo);
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("userinfo");
-    if (storedUser && !userInfo.userBasicInfo) {
-      dispatch.app.setUserInfo(JSON.parse(tools.uncompile(storedUser)));
+    const userTemp = sessionStorage.getItem("userinfo");
+    if (userTemp && !userinfo.userBasicInfo) {
+      dispatch.app.setUserInfo(JSON.parse(tools.uncompile(userTemp)));
     }
-  }, [dispatch, userInfo.userBasicInfo]);
-
-  const renderUserRoutes = () => (
-    <AuthWithLogin>
-      <UserLayout />
-    </AuthWithLogin>
-  );
-
-  const renderMainRoutes = () => (
-    <AuthNoLogin>
-      <BasicLayout />
-    </AuthNoLogin>
-  );
-
-  const renderSystemRoute = (path, Component) => (
-    <Route
-      path={path}
-      element={
-        <AuthNoPower>
-          <Component />
-        </AuthNoPower>
-      }
-    />
-  );
+  }, [dispatch, userinfo.userBasicInfo]);
 
   return (
     <Routes>
-      <Route path="/user" element={renderUserRoutes()}>
-        <Route path="/user" element={<Navigate to="login" />} />
-        <Route path="login" element={<Login />} />
+      <Route
+        path="/user"
+        element={
+          <AuthWithLogin>
+            <UserLayout />
+          </AuthWithLogin>
+        }
+      >
+        <Route path="/user" element={<Navigate to="login" />}></Route>
+        <Route path="login" element={<Login />}></Route>
         <Route path="*" element={<Navigate to="login" />} />
       </Route>
-      <Route path="/" element={renderMainRoutes()}>
+      <Route
+        path="/"
+        element={
+          <AuthNoLogin>
+            <BasicLayout />
+          </AuthNoLogin>
+        }
+      >
         <Route path="/" element={<Navigate to="home" />} />
         <Route path="home" element={<Home />} />
         <Route path="goods" element={<Item />} />
         <Route path="order" element={<Order />} />
         <Route path="marketing" element={<Marketing />} />
-        {renderSystemRoute("system/menuadmin", MenuAdmin)}
-        {renderSystemRoute("system/roleadmin", RoleAdmin)}
-        {renderSystemRoute("system/useradmin", UserAdmin)}
+        <Route
+          path="system/menuadmin"
+          element={
+            <AuthNoPower>
+              <MenuAdmin />
+            </AuthNoPower>
+          }
+        />
+        <Route
+          path="system/roleadmin"
+          element={
+            <AuthNoPower>
+              <RoleAdmin />
+            </AuthNoPower>
+          }
+        />
+        <Route
+          path="system/useradmin"
+          element={
+            <AuthNoPower>
+              <UserAdmin />
+            </AuthNoPower>
+          }
+        />
       </Route>
     </Routes>
   );
 }
 
-export default RouterComponent;
+export default RouterCom;
