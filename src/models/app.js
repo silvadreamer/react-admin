@@ -38,7 +38,7 @@ export default {
         const res = await axios.post("/api/login", params);
         return res;
       } catch (err) {
-
+        console.error(err);
       }
       return;
     },
@@ -49,7 +49,7 @@ export default {
         sessionStorage.removeItem("userinfo");
         return "success";
       } catch (err) {
-
+        console.error(err);
       }
       return;
     },
