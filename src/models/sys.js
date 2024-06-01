@@ -22,71 +22,12 @@ export default {
   },
 
   effects: (dispatch) => ({
-    async getMenus() {
-      try {
-        const res = await axios.get("/api/getmenus");
-        if (res && res.status === 200) {
-          dispatch.sys.reducerSetMenus(res.data);
-        }
-        return res;
-      } catch (err) {
-      }
-      return;
-    },
-
-    async getMenusById(params) {
-      try {
-        const res = await axios.post(`/api/getMenusById`, params);
-        return res;
-      } catch (err) {
-      }
-      return;
-    },
-
-    async addMenu(params) {
-      try {
-        const res = await axios.post("/api/addmenu", params);
-        return res;
-      } catch (err) {
-      }
-      return;
-    },
-
-    async upMenu(params) {
-      try {
-        const res = await axios.post("/api/upmenu", params);
-        return res;
-      } catch (err) {
-      }
-      return;
-    },
 
     async delMenu(params) {
       try {
         const res = await axios.post("/api/delmenu", params);
         return res;
-      } catch (err) {
-      }
-      return;
-    },
-
-    async getPowerDataByMenuId(params) {
-      try {
-        const res = await axios.get(
-          `/api/getpowerbymenuid?${qs.stringify(params)}`
-        );
-        return res;
-      } catch (err) {
-      }
-      return;
-    },
-
-    async getPowerById(params) {
-      try {
-        const res = await axios.post(`/api/getPowerById`, params);
-        return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -97,8 +38,42 @@ export default {
           dispatch.sys.reducerSetRoles(res.data);
         }
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
+      return;
+    },
+
+    async getMenus() {
+      try {
+        const res = await axios.get("/api/getmenus");
+        if (res && res.status === 200) {
+          dispatch.sys.reducerSetMenus(res.data);
+        }
+        return res;
+      } catch (err) {      }
+      return;
+    },
+
+    async getMenusById(params) {
+      try {
+        const res = await axios.post(`/api/getMenusById`, params);
+        return res;
+      } catch (err) {      }
+      return;
+    },
+
+    async addMenu(params) {
+      try {
+        const res = await axios.post("/api/addmenu", params);
+        return res;
+      } catch (err) {      }
+      return;
+    },
+
+    async upMenu(params) {
+      try {
+        const res = await axios.post("/api/upmenu", params);
+        return res;
+      } catch (err) {      }
       return;
     },
 
@@ -106,8 +81,7 @@ export default {
       try {
         const res = await axios.post("/api/addpower", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -115,8 +89,7 @@ export default {
       try {
         const res = await axios.post("/api/uppower", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -124,8 +97,7 @@ export default {
       try {
         const res = await axios.post("/api/delpower", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -135,44 +107,25 @@ export default {
           `/api/getroles?${qs.stringify(params)}`
         );
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
-    async getRoleById(params) {
+    async getPowerDataByMenuId(params) {
       try {
-        const res = await axios.post(`/api/getRoleById`, params);
+        const res = await axios.get(
+          `/api/getpowerbymenuid?${qs.stringify(params)}`
+        );
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
-    async addRole(params) {
+    async getPowerById(params) {
       try {
-        const res = await axios.post("/api/addrole", params);
+        const res = await axios.post(`/api/getPowerById`, params);
         return res;
-      } catch (err) {
-      }
-      return;
-    },
-
-    async upRole(params) {
-      try {
-        const res = await axios.post("/api/uprole", params);
-        return res;
-      } catch (err) {
-      }
-      return;
-    },
-
-    async delRole(params) {
-      try {
-        const res = await axios.post("/api/delrole", params);
-        return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -182,8 +135,7 @@ export default {
           `/api/findAllPowerByRoleId?${qs.stringify(params)}`
         );
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -194,8 +146,7 @@ export default {
           dispatch.sys.reducerSetAllPowers(res.data);
         }
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -203,8 +154,39 @@ export default {
       try {
         const res = await axios.post("/api/setPowersByRoleId", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
+      return;
+    },
+
+    async getRoleById(params) {
+      try {
+        const res = await axios.post(`/api/getRoleById`, params);
+        return res;
+      } catch (err) {      }
+      return;
+    },
+
+    async addRole(params) {
+      try {
+        const res = await axios.post("/api/addrole", params);
+        return res;
+      } catch (err) {      }
+      return;
+    },
+
+    async upRole(params) {
+      try {
+        const res = await axios.post("/api/uprole", params);
+        return res;
+      } catch (err) {      }
+      return;
+    },
+
+    async delRole(params) {
+      try {
+        const res = await axios.post("/api/delrole", params);
+        return res;
+      } catch (err) {      }
       return;
     },
 
@@ -212,8 +194,7 @@ export default {
       try {
         const res = await axios.post("/api/setPowersByRoleIds", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -223,8 +204,7 @@ export default {
           `/api/getUserList?${qs.stringify(params)}`
         );
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -232,8 +212,7 @@ export default {
       try {
         const res = await axios.post("/api/addUser", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -241,8 +220,7 @@ export default {
       try {
         const res = await axios.post("/api/upUser", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -250,8 +228,7 @@ export default {
       try {
         const res = await axios.post("/api/delUser", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
 
@@ -259,8 +236,7 @@ export default {
       try {
         const res = await axios.post("/api/upUser", params);
         return res;
-      } catch (err) {
-      }
+      } catch (err) {      }
       return;
     },
   }),

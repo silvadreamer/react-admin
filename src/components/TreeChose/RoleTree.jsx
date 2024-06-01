@@ -26,13 +26,6 @@ export default function RoleTreeComponent(props) {
     []
   );
 
-  const onOk = useCallback(() => {
-    const res = props.data.filter((item) => {
-      return nowKeys.includes(`${item.id}`);
-    });
-    props.onOk && props.onOk(nowKeys, res);
-  }, [props, nowKeys]);
-
   const onClose = useCallback(() => {
     props.onClose();
   }, [props]);
@@ -40,6 +33,13 @@ export default function RoleTreeComponent(props) {
   const onCheck = useCallback((keys) => {
     setNowKeys(keys);
   }, []);
+
+  const onOk = useCallback(() => {
+    const res = props.data.filter((item) => {
+      return nowKeys.includes(`${item.id}`);
+    });
+    props.onOk && props.onOk(nowKeys, res);
+  }, [props, nowKeys]);
 
   const makeKey = useCallback((data) => {
     const newData = [];

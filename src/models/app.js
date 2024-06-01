@@ -1,5 +1,4 @@
 import axios from "@/util/axios";
-import { message } from "antd";
 
 const defaultState = {
   userinfo: {

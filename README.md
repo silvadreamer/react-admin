@@ -25,6 +25,7 @@
 - Ant Design
 - React Router
 - React Redux
+- vite
 
 ### 数据存储
 

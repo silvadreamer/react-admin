@@ -2,24 +2,17 @@ import React, { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useMount } from "react-use";
 import {
-  Form,
-  Button,
-  Input,
-  Table,
-  message,
-  Popconfirm,
-  Modal,
-  Tooltip,
-  Divider,
-  Select,
+  Form,  Button,
+  Input,  Table,
+  message,  Popconfirm,
+  Modal,  Tooltip,
+  Divider,  Select,
   InputNumber,
 } from "antd";
+
 import {
-  EditOutlined,
-  ToolOutlined,
-  DeleteOutlined,
-  PlusCircleOutlined,
-  SearchOutlined,
+  EditOutlined,  ToolOutlined,
+  DeleteOutlined,  PlusCircleOutlined, SearchOutlined,
 } from "@ant-design/icons";
 
 import tools from "@/util/tools";

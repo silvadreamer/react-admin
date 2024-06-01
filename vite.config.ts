@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import eslintPlugin from "vite-plugin-eslint";
-import {createStyleImportPlugin, AntdResolve} from 'vite-plugin-style-import';
-import { resolve } from "path";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import eslintPlugin from 'vite-plugin-eslint';
+import { createStyleImportPlugin, AntdResolve } from 'vite-plugin-style-import';
+import { resolve } from 'path';
 
 function pathResolve(dir) {
   return resolve(process.cwd(), ".", dir);
@@ -16,11 +16,11 @@ export default defineConfig({
     eslintPlugin({
       cache: false,
       failOnError: false,
-      include: ["src/**/*.js", "src/**/*.jsx", "src/**/*.js"],
+      include: ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
     }),
     createStyleImportPlugin({
-      resolves: [AntdResolve()]
-    })
+      resolves: [AntdResolve()],
+    }),
   ],
   css: {
     preprocessorOptions: {
@@ -28,7 +28,7 @@ export default defineConfig({
         javascriptEnabled: true,
       },
     },
-    postcss:{}
+    postcss: {},
   },
   resolve: {
     alias: [
@@ -38,4 +38,7 @@ export default defineConfig({
       },
     ],
   },
-})
+  server: {
+    port: 3001, // 设置开发服务器的端口号
+  },
+});
